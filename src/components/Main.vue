@@ -10,6 +10,11 @@
 import SearchBar from './SearchBar'
 
 export default {
+    data() {
+        return{
+            map: null
+        }
+    },
     components: {
         'search-bar': SearchBar
     },
@@ -21,11 +26,11 @@ export default {
                 height : window.innerHeight,
             });
             map.setCenter(new Tmap.LonLat("126.986072", "37.570028").transform("EPSG:4326", "EPSG:3857"), 15);
+            this.map = map;
         } 
     },
     mounted(){
         this.initTmap();
-        console.log(window.innerHeight)
     }
 }
 </script>
@@ -33,7 +38,7 @@ export default {
 <style lang="scss" scoped>
 .main{
     position: relative;
-    .search_bar{
+    .search_nav{
         position: absolute;
         margin: 10px 0 0 10px;
     }

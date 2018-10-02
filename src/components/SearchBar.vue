@@ -5,8 +5,8 @@
             <i class="fas fa-search" />
         </div>
         <div class="dropdown">
-            <div class="place" v-for="place in suggestPlaces" :key="place.id">
-                {{place.name}} {{key}}
+            <div class="place" v-for="place in suggestPlaces" :key="place.name+place.lon+place.lat">
+                {{place.name}}
             </div>
         </div>
     </div>
@@ -23,11 +23,16 @@ export default {
     },
     methods: {
         onEnter() {
-            this.searchPlace(this.keyword);
+            this.searchPlace(this.suggestPlaces[0]);
+            return this.suggestPlaces = [];
         },
         onInput(e) {
             this.keyword = e.target.value;
-            if(this.keyword!='') this.suggestPlace(this.keyword);
+            if(this.keyword==='') return this.suggestPlaces = [];
+            this.suggestPlace(this.keyword);
+        },
+        searchPlace(place){
+            this.eventBus.$emit('search', place);
         },
         suggestPlace(keyword) {
             this.searchPOI(keyword)
@@ -43,13 +48,15 @@ export default {
                 var suggest = [];
                 //each문을 실행하여 마커를 추가합니다.
                 jQuery(this.tdata.responseXML).find("searchPoiInfo pois poi").each(function(){
-                    suggest.push({
-                        name: jQuery(this).find("name").text(),
-                        lon: jQuery(this).find("frontLon").text(),
-                        lat: jQuery(this).find("frontLat").text()
-                    });
+                    if(1){
+                        suggest.push({
+                            name: jQuery(this).find("name").text(),
+                            lon: jQuery(this).find("frontLon").text(),
+                            lat: jQuery(this).find("frontLat").text()
+                        });
+                    }
                 });
-                console.log(suggest)
+                suggest.slice(20, suggest.length-20);
                 this.suggestPlaces = suggest;
             }else {
                 // console.log("검색결과 없음")

@@ -1,11 +1,12 @@
 <template>
     <div class="search_nav">
         <div class="search_bar">
-            <input @keyup.enter="onEnter" @input="onInput" type="text" class="input" placeholder="장소 검색"/>
+            <span>{{person}}</span>
+            <input v-model="keyword" @keyup.enter="onEnter" @keyup.down="onKeyDown" @keyup.up="onKeyUp" @input="onInput" type="text" class="input" placeholder="장소 검색"/>
             <i class="fas fa-search" />
         </div>
         <div class="dropdown">
-            <div class="place" v-for="place in suggestPlaces" :key="place.name+place.lon+place.lat">
+            <div class="place" :class="{active: index === idx}" v-for="(place, index) in suggestPlaces" :key="index">
                 {{place.name}}
             </div>
         </div>
@@ -14,17 +15,27 @@
 
 <script>
 export default {
+    props: ['person'],
     data() {
         return {
             keyword: "",
             suggestPlaces: [],
-            tdata: null
+            tdata: null,
+            idx: 0
         }
     },
     methods: {
+        onKeyDown() {
+            this.idx++;
+        },
+        onKeyUp() {
+            if(this.idx === 0) return;
+            this.idx--;
+        },
         onEnter() {
-            this.searchPlace(this.suggestPlaces[0]);
-            return this.suggestPlaces = [];
+            this.searchPlace(this.suggestPlaces[this.idx]);
+            this.suggestPlaces = [];
+            this.idx = 0;
         },
         onInput(e) {
             this.keyword = e.target.value;
@@ -32,7 +43,8 @@ export default {
             this.suggestPlace(this.keyword);
         },
         searchPlace(place){
-            this.eventBus.$emit('search', place);
+            this.eventBus.$emit('search', [place, this.person]);
+            this.keyword = place.name;
         },
         suggestPlace(keyword) {
             this.searchPOI(keyword)
@@ -96,8 +108,14 @@ export default {
         cursor: default;
         text-align: left;
         padding-left: 20px;
+        overflow: hidden; 
+        text-overflow: ellipsis;
+        white-space: nowrap; 
     }
     .place:hover{
+        background-color: #eaeaea;
+    }
+    .active{
         background-color: #eaeaea;
     }
 }

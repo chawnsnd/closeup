@@ -5,6 +5,17 @@
             <div class="b"><span class="placekind">B</span> <span class="placename" v-if="placeB != null">{{placeB.name}}</span></div>
         </div>
         <div class="btn absolute" @click="recommand">약속장소 추천</div>
+        <div class="more">
+            <div v-if="menuFlag" class="menu">
+                <label><input type="checkbox"/>전체</label>
+                <label><input type="checkbox"/>카페</label>
+                <label><input type="checkbox"/>노래방</label>
+                <label><input type="checkbox"/>식당</label>
+                <label><input type="checkbox"/>호프</label>
+                <input type="checkbox"/><input type="text" placeholder="기타" width="50px"/>
+            </div>
+            <span class="moretap" @click="menuFlag = !menuFlag">::</span>
+        </div>
     </div>
     
 </template>
@@ -19,7 +30,8 @@ export default {
     data() {
         return{
             placeA: null,
-            placeB: null
+            placeB: null,
+            menuFlag: false
         }
     },
     methods:{
@@ -33,11 +45,12 @@ export default {
             if(this.placeA == null) return alert("A 장소를 입력하세요");
             if(this.placeB == null) return alert("B 장소를 입력하세요");
             this.eventBus.$emit('recommand', [this.placeA, this.placeB]);
+            this.menuFlag = false;
         }
     },
     mounted(){
         this.eventBus.$on("setA", this.setA);
-        this.eventBus.$on("setB", this.setB)
+        this.eventBus.$on("setB", this.setB);
     }
 }
 </script>
@@ -50,8 +63,9 @@ export default {
     width: 350px;
     text-align: left;
     display: flex;
+    height: 70px;
 }
-.a, .b{
+.nav > *{
     border: 1px solid #eaeaea;
     padding: 15px;
     flex: 1;
@@ -60,13 +74,19 @@ export default {
     color: #5fc694;
 }
 .placename{
+    cursor: pointer;
     vertical-align: top;
+    font-size: 12px;
     width: 120px;
-    height: 40px;
     color: black;
     float: right;
+    height: 40px;
+    overflow: hidden;
+    word-break: keep-all;
+    text-overflow: ellipsis;
 }
 .btn {
+    display: inline-block;
     text-align: center;
     cursor: pointer;
     width: 350px;
@@ -81,5 +101,23 @@ export default {
 }
 .btn:active{
     background-color: #598b73;
+}
+.more{
+    cursor: pointer;
+    float: right;
+    background-color: white;
+    line-height: 50px;
+    display: inline-block;
+}
+.more > *{
+    display: inline-block;
+}
+.menu{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.moretap {
+    border: 1px solid #eaeaea;
+    width: 20px;
 }
 </style>

@@ -61,7 +61,8 @@ export default {
             }
             this.tData.getRoutePlan(a_lonLat, b_lonLat, optionObj);//경로 탐색 데이터를 콜백 함수를 통해 XML로 리턴합니다.
             var kmlForm = new Tmap.Format.KML().read(this.tData.responseXML);
-            this.drawVector("route", kmlForm);        
+            this.drawVector("route", kmlForm);
+            this.getAroundPOISearch(kmlForm);
         },
         drawVector(vectorName, features){
             for(var index in features){
@@ -83,8 +84,66 @@ export default {
             }
             this.map.zoomToExtent(this.bounds);
         },
-        getAroundPOISearch() {
-            console.log("준비중")
+        getAroundPOISearch(features) {
+            for(var index in features){
+                var coordinates = features[index].placemark.linestring.coordinates;
+                var arr = str.split("")[0].split(",");
+                var lon = arr[0]; var lat = arr[1];
+                this.ajaxPOISearch(lon, lat, "편의점;노래방;");
+            }
+        },
+        ajaxPOISearch(lon, lat, categories){
+            var self = this;
+            $.ajax({
+                method:"GET",
+                url:"https://api2.sktelecom.com/tmap/pois/search/around?version=1&format=xml&callback=result",// 주변 POI 검색 api 요청 url입니다.
+                async:false,
+                data:{
+                    "categories" : categories,
+                    "resCoordType" : "EPSG3857",
+                    "reqCoordType" : "WGS84GEO",
+                    "centerLon" : lon,
+                    "centerLat" : lat,
+                    "multiPoint" : "N",
+                    // "radius" : 33,
+                    "appKey" : "5a4a3525-808d-41a4-8968-b84175f11618",
+                    "count" : 10
+                },
+                success:function(response){
+                    var prtcl = response;
+                    var prtclString = new XMLSerializer().serializeToString(prtcl);
+                    var xmlDoc = $.parseXML( prtclString ),
+                    $xml = $( xmlDoc ),
+                    $intRate = $xml.find("poi");
+                    $intRate.each(function(index, element) {
+                        var name = element.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+                        var lon = element.getElementsByTagName("noorLon")[0].childNodes[0].nodeValue;
+                        var lat = element.getElementsByTagName("noorLat")[0].childNodes[0].nodeValue;
+                        var telNo = element.getElementsByTagName("telNo")[0].textContent;
+                        var lonlat = new Tmap.LonLat(lon, lat);
+                        var marker = self.makeMarker(lonlat, "o")
+                        var content ="<div style=' position: relative; border-bottom: 1px solid #dcdcdc; line-height: 18px; padding: 0 35px 2px 0;'>"+
+				    "<div style='font-size: 12px; line-height: 15px;'>"+
+				        "<span style='display: inline-block; width: 14px; height: 14px; background-image: url(/resources/images/common/icon_blet.png); vertical-align: middle; margin-right: 5px;'></span>"+name+
+				    "</div>"+telNo
+                 "</div>";
+                        
+			            var popup = new Tmap.Popup("lablePopup",  new Tmap.LonLat(lon, lat),  new Tmap.Size(100,20), content,  true);//popup 생성
+			            popup.autoSize = true;//Contents 내용에 맞게 Popup창의 크기를 재조정할지 여부를 결정
+                        self.map.addPopup(popup);//map에 popup추가
+                        popup.hide();
+                        marker.events.register("mouseover", popup, onOverMarker);
+                        function onOverMarker(evt) {
+                            this.show(); //마커에 마우스가 오버되었을 때 팝업이 보입니다. 
+                        }
+                        marker.events.register("mouseout", popup, onOutMarker);
+                        function onOutMarker(evt) {
+                            this.hide(); //마커에 마우스가 없을땐 팝업이 숨겨집니다.
+                        }
+                        self.markerLayer.addMarker(marker);
+                    })
+                }
+            })
         },
         setA(place){
             if(this.markerA != null) {

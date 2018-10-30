@@ -86,10 +86,10 @@ export default {
         },
         getAroundPOISearch(features) {
             for(var index in features){
-                var coordinates = features[index].placemark.linestring.coordinates;
-                var arr = str.split("")[0].split(",");
-                var lon = arr[0]; var lat = arr[1];
-                this.ajaxPOISearch(lon, lat, "편의점;노래방;");
+                // var lon = features[index].geometry.components.x;
+                // var lat = features[index].geometry.components.y;
+                console.log(features[index])
+                // this.ajaxPOISearch(String(lon), String(lat), "편의점;노래방;");
             }
         },
         ajaxPOISearch(lon, lat, categories){
@@ -99,11 +99,11 @@ export default {
                 url:"https://api2.sktelecom.com/tmap/pois/search/around?version=1&format=xml&callback=result",// 주변 POI 검색 api 요청 url입니다.
                 async:false,
                 data:{
-                    "categories" : categories,
+                    "categories" : "편의점;카페;노래방;",
                     "resCoordType" : "EPSG3857",
                     "reqCoordType" : "WGS84GEO",
-                    "centerLon" : lon,
-                    "centerLat" : lat,
+                    "centerLon" : 126.632763,
+                    "centerLat" : 37.651355,
                     "multiPoint" : "N",
                     // "radius" : 33,
                     "appKey" : "5a4a3525-808d-41a4-8968-b84175f11618",

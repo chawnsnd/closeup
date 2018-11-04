@@ -20,23 +20,24 @@ export default {
       markerLayer: null,
       placeA: null,
       placeB: null,
-      tData: null
+      tData: null,
+
     };
   },
   components: {
-    "searchbar": SearchBar,
-    "tmap": Tmap,
-    "list": List,
-    "navigation": Navigation
+    searchbar: SearchBar,
+    tmap: Tmap,
+    list: List,
+    navigation: Navigation
   },
-  methods: {
-  },
+  methods: {},
   mounted() {
     var name = "junwoongCha";
-    var exampleSocket = new WebSocket("ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152");
-    exampleSocket.onopen = function(event){
+    // var exampleSocket = new WebSocket("ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152");
+    var exampleSocket = new WebSocket("ws://127.0.0.1:6789/");
+    exampleSocket.onopen = function(event) {
       exampleSocket.send(name);
-    }
+    };
   }
 };
 </script>
@@ -44,7 +45,7 @@ export default {
 <style lang="scss" scoped>
 .main {
   position: relative;
-  .absolute{
+  .absolute {
     position: absolute;
   }
   .searchbar {

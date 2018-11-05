@@ -10,9 +10,7 @@ export default {
             markerLayer: null,
             vectorLayer: null,
             tData: null,
-            markerX: null,
-            markerA: null,
-            markerB: null
+            markers: []
         }
     },
     methods: {
@@ -38,31 +36,35 @@ export default {
             var icon = new Tmap.Icon('http://tmapapis.sktelecom.com/upload/tmap/marker/pin_b_m_'+str+'.png',size, offset);//마커 아이콘 설정
             return new Tmap.Marker(lonlat, icon);//마커 생성
         },
-        clickPOI(place){
-            if(this.markerX != null) {
-                this.markerLayer.removeMarker(this.markerX);
-                this.markerX = null
+        removeMarker(index){
+            if(this.markers[index] != null){
+                this.markerLayer.removeMarker(this.markers[index]);
+            }
+        },
+        clickPOI(place, placeKey){
+            if(this.markers[placeKey] != null){
+                this.markerLayer.removeMarker(this.markers[placeKey]);
             }
             var lonlat = new Tmap.LonLat(place.frontLon, place.frontLat).transform("EPSG:3857", "EPSG:3857")
             this.map.setCenter(lonlat, 15);
-            this.markerX = this.makeMarker(lonlat, 'x');
-            this.markerLayer.addMarker(this.markerX);
+            this.markers[placeKey] = this.makeMarker(lonlat, String(placeKey+1));
+            this.markerLayer.addMarker(this.markers[placeKey]);
         },
         recommand(places){
-            var placeA = places[0];
-            var placeB = places[1];
-            var a_lonLat = new Tmap.LonLat(Number(placeA.frontLon), Number(placeA.frontLat)); //시작 좌표입니다.   
-            var b_lonLat = new Tmap.LonLat(Number(placeB.frontLon), Number(placeB.frontLat)); //도착 좌표입니다.
             // 사각형 바운드 그리기
             var bounds = new Tmap.Bounds();
-            bounds.extend(a_lonLat);
-            bounds.extend(b_lonLat);
+            places.forEach(place => {
+                var lonLat = new Tmap.LonLat(Number(place.frontLon), Number(place.frontLat));
+                bounds.extend(lonLat);
+            });
             this.map.zoomToExtent(bounds);
             // 사각형 내 좌표 나누기
             var border = Math.max(bounds.getSize().w, bounds.getSize().h);
             var radius = 9900; //m단위
+            if(border/2 <= radius){
+                radius = border
+            }
             var searchCount = border/(radius*Math.sqrt(2));
-            alert(searchCount)
             if(searchCount >= 3) return alert("검색반경이 너무 넓습니다.")
             for(var i=0; i<=searchCount; i++){
                 for(var j=0; j<=searchCount; j++){
@@ -112,7 +114,6 @@ export default {
                     $intRate.each(function(index, element){
                         var lon = element.getElementsByTagName("noorLon")[0].childNodes[0].nodeValue;
                         var lat = element.getElementsByTagName("noorLat")[0].childNodes[0].nodeValue;
-                        // console.log(element)
                         var marker = self.makeMarker(new Tmap.LonLat(lon, lat), 'e');
                         self.markerLayer.addMarker(marker);
                     })
@@ -121,26 +122,6 @@ export default {
                     console.log("에러")
                 }
             })
-        },
-        setA(place){
-            if(this.markerA != null) {
-                this.markerLayer.removeMarker(this.markerA);
-                this.markerA = null
-            }
-            var lonlat = new Tmap.LonLat(place.frontLon, place.frontLat);
-            this.map.setCenter(lonlat, 15);
-            this.markerA = this.makeMarker(lonlat, 'a');
-            this.markerLayer.addMarker(this.markerA);
-        },
-        setB(place){
-            if(this.markerB != null) {
-                this.markerLayer.removeMarker(this.markerB);
-                this.markerB = null
-            }
-            var lonlat = new Tmap.LonLat(place.frontLon, place.frontLat);
-            this.map.setCenter(lonlat, 15);
-            this.markerB = this.makeMarker(lonlat, 'b');
-            this.markerLayer.addMarker(this.markerB);
         }
     },
     mounted() {
@@ -150,6 +131,7 @@ export default {
         this.eventBus.$on("setB", this.setB);
         this.eventBus.$on("clickPOI", this.clickPOI);
         this.eventBus.$on("recommand", this.recommand);
+        this.eventBus.$on("removeMarker", this.removeMarker);
     }
 }
 </script>

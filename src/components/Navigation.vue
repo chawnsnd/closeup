@@ -1,8 +1,33 @@
 <template>
     <div class="navigation">
         <div class="nav">
-            <div class="a"><span class="placekind">A</span> <span class="placename" v-if="placeA != null">{{placeA.name}}</span></div>
-            <div class="b"><span class="placekind">B</span> <span class="placename" v-if="placeB != null">{{placeB.name}}</span></div>
+            <div class="scroll">
+                <div class="place">
+                    <div class="placekey">1</div>
+                    <div class="searchbar" v-if="places[0].name == null">
+                        <input v-model="places[0].keyword" @keyup.enter="onEnter(0)" type="text" class="input" placeholder="장소 검색"/>
+                    </div>
+                    <div class="placename" @click="places[0].name = null" v-else>{{places[0].name}}</div>
+                </div>
+                <div class="place">
+                    <div class="placekey">2</div>
+                    <div class="searchbar" v-if="places[1].name == null">
+                        <input v-model="places[1].keyword" @keyup.enter="onEnter(1)" type="text" class="input" placeholder="장소 검색"/>
+                    </div>
+                    <div class="placename" @click="places[1].name = null" v-else>{{places[1].name}}</div>
+                </div>
+                <div v-for="(place, index) in places" :key="index">
+                    <div class="place" v-if="index>=2">
+                        <div class="placekey">{{index+1}}</div>
+                        <div class="searchbar" v-if="places[index].name == null">
+                            <input v-model="places[index].keyword" @keyup.enter="onEnter(index)" type="text" class="input" placeholder="장소 검색"/>
+                        </div>
+                        <div class="placename" @click="places[index].name = null" v-else>{{places[index].name}}</div>
+                        <div class="remove" @click="removePlace(index)">-</div>
+                    </div>
+                </div>
+            </div>
+            <div class="place plus" @click="places.push({keyword: '', name: null})">+ 사람추가</div>
         </div>
         <div class="btn absolute" @click="recommand">약속장소 추천</div>
         <div class="more">
@@ -14,7 +39,7 @@
                 <label><input type="checkbox"/>호프</label>
                 <input type="checkbox"/><input type="text" placeholder="기타" width="50px"/>
             </div>
-            <span class="moretap" @click="menuFlag = !menuFlag">::</span>
+            <div class="moretap" @click="menuFlag = !menuFlag">::</div>
         </div>
     </div>
     
@@ -29,28 +54,47 @@ export default {
     },
     data() {
         return{
-            placeA: null,
-            placeB: null,
+            places: [
+                {
+                    keyword: "",
+                    name: null
+                },
+                {
+                    keyword: "",
+                    name: null
+                }
+            ],
             menuFlag: false
         }
     },
     methods:{
-        setA(place){
-            this.placeA = place;
-        },
-        setB(place){
-            this.placeB = place;
+        setPlace(place, index){
+            this.places[index].info = place;
+            this.places[index].name = place.name;
+            this.places[index].keyword = place.name;
         },
         recommand(){
-            if(this.placeA == null) return alert("A 장소를 입력하세요");
-            if(this.placeB == null) return alert("B 장소를 입력하세요");
-            this.eventBus.$emit('recommand', [this.placeA, this.placeB]);
+            this.places.forEach(place => {
+                if(place.name === null) return alert("않이! 사람을 추가했으면 장소를 채우셔야죠");
+            });
+            var places = [];
+            this.places.forEach(place => {
+                places.push(place.info);
+            });
+            this.eventBus.$emit('recommand', places);
             this.menuFlag = false;
+        },
+        onEnter(index) {
+            this.eventBus.$emit('inputKeyword', this.places[index].keyword, index);
+            this.suggestPlaces = [];
+        },
+        removePlace(index){
+            this.places.splice(index,1);
+            this.eventBus.$emit('removeMarker', index);
         }
     },
     mounted(){
-        this.eventBus.$on("setA", this.setA);
-        this.eventBus.$on("setB", this.setB);
+        this.eventBus.$on("setPlace", this.setPlace);
     }
 }
 </script>
@@ -62,29 +106,54 @@ export default {
     border: 1px solid #eaeaea;
     width: 350px;
     text-align: left;
-    display: flex;
-    height: 70px;
 }
-.nav > *{
+.scroll{
+    overflow-y: scroll; 
+    max-height:156px;
+    -ms-overflow-style: none;
+}
+.place{
     border: 1px solid #eaeaea;
     padding: 15px;
-    flex: 1;
-}
-.placekind{
     color: #5fc694;
+    display: flex;
+    height: 20px;
+}
+.placekey{
+    flex: 1;
+    text-align: left;
+}
+.searchbar{
+    flex: 10;
+}
+.remove{
+    flex: 1;
+    display: inline-block;
+    cursor: pointer;
+    font-size: 20px;
+    text-align: right;
+}
+.input{
+    height: 90%;
+    width: 100%;
+    outline: none;
 }
 .placename{
-    cursor: pointer;
-    vertical-align: top;
-    font-size: 12px;
-    width: 120px;
+    text-align: left;
+    flex: 10;
     color: black;
-    float: right;
-    height: 40px;
     overflow: hidden;
     word-break: keep-all;
     text-overflow: ellipsis;
+    cursor: pointer;
 }
+.plus{
+    cursor: pointer;
+    text-align: center;
+}
+
+
+
 .btn {
     display: inline-block;
     text-align: center;

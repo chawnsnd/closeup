@@ -10,7 +10,6 @@ export default {
             markerLayer: null,
             vectorLayer: null,
             tData: null,
-            bounds: null,
             markerX: null,
             markerA: null,
             markerB: null
@@ -32,7 +31,6 @@ export default {
             this.markerLayer = new Tmap.Layer.Markers(); //마커 레이어 생성
             this.map.addLayer(this.markerLayer); //map에 마커 레이어 추가
             this.tData = new Tmap.TData();
-            this.bounds = new Tmap.Bounds();
         },
         makeMarker(lonlat, str) {
             var size = new Tmap.Size(24, 38);//아이콘 크기 설정
@@ -55,59 +53,55 @@ export default {
             var placeB = places[1];
             var a_lonLat = new Tmap.LonLat(Number(placeA.frontLon), Number(placeA.frontLat)); //시작 좌표입니다.   
             var b_lonLat = new Tmap.LonLat(Number(placeB.frontLon), Number(placeB.frontLat)); //도착 좌표입니다.
-		    var optionObj = {
-                reqCoordType:"EPSG3857", //요청 좌표계 옵셥 설정입니다.
-                resCoordType:"EPSG3857"  //응답 좌표계 옵셥 설정입니다.
-            }
-            this.tData.getRoutePlan(a_lonLat, b_lonLat, optionObj);//경로 탐색 데이터를 콜백 함수를 통해 XML로 리턴합니다.
-            var kmlForm = new Tmap.Format.KML().read(this.tData.responseXML);
-            this.drawVector("route", kmlForm);
-            this.getAroundPOISearch(kmlForm);
-        },
-        drawVector(vectorName, features){
-            for(var index in features){
-                features[index].style = {
-                    strokeColor: "#598b73",
-                    strokeWidth: 5,
-                    pointRadius: 3
-                };
-            }
-            if(this.vectorLayer != null) this.map.removeLayer(this.vectorLayer);
-            this.vectorLayer = new Tmap.Layer.Vector(vectorName);
-            this.vectorLayer.addFeatures(features);
-            this.map.addLayer(this.vectorLayer);
-            this.map.zoomToExtent(this.vectorLayer.getDataExtent());
-        },
-        setBound(places){
-            for(var idx in places){
-                this.bounds.extend(new Tmap.LonLat(places[idx].frontLon, places[idx].frontLat));
-            }
-            this.map.zoomToExtent(this.bounds);
-        },
-        getAroundPOISearch(features) {
-            for(var index in features){
-                // var lon = features[index].geometry.components.x;
-                // var lat = features[index].geometry.components.y;
-                console.log(features[index])
-                // this.ajaxPOISearch(String(lon), String(lat), "편의점;노래방;");
+            // 사각형 바운드 그리기
+            var bounds = new Tmap.Bounds();
+            bounds.extend(a_lonLat);
+            bounds.extend(b_lonLat);
+            this.map.zoomToExtent(bounds);
+            // 사각형 내 좌표 나누기
+            var border = Math.max(bounds.getSize().w, bounds.getSize().h);
+            var radius = 9900; //m단위
+            var searchCount = border/(radius*Math.sqrt(2));
+            alert(searchCount)
+            if(searchCount >= 3) return alert("검색반경이 너무 넓습니다.")
+            for(var i=0; i<=searchCount; i++){
+                for(var j=0; j<=searchCount; j++){
+                    var lonLat = new Tmap.LonLat((bounds.getCenterLonLat().lon-border/2)+i*(border/searchCount), (bounds.getCenterLonLat().lat+border/2)-j*(border/searchCount));
+                    var vector_layer = new Tmap.Layer.Vector('Tmap Vector Layer'); // 백터 레이어 생성
+                    this.map.addLayers([vector_layer]); 
+                    var circle = new Tmap.Geometry.Circle(lonLat.lon, lonLat.lat, radius); // 원 생성
+                    var style_red = {
+                        fillColor:"#FF0000",
+                        fillOpacity:0.2,
+                        strokeColor: "#FF0000",
+                        strokeWidth: 3,
+                        strokeDashstyle: "solid",
+                        pointRadius: 60
+                    };
+                    var circleFeature = new Tmap.Feature.Vector(circle, null, style_red); // 원 백터 생성
+		            vector_layer.addFeatures([circleFeature]); // 원 백터 를 백터 레이어에 추가
+                    var lonLat = lonLat.transform("EPSG:3857", "EPSG:4326");
+                    // this.getPOIfromCategory(lonLat, "", radius)
+                }
             }
         },
-        ajaxPOISearch(lon, lat, categories){
+        getPOIfromCategory(lonLat, categories, radius){
             var self = this;
             $.ajax({
                 method:"GET",
                 url:"https://api2.sktelecom.com/tmap/pois/search/around?version=1&format=xml&callback=result",// 주변 POI 검색 api 요청 url입니다.
                 async:false,
                 data:{
-                    "categories" : "편의점;카페;노래방;",
-                    "resCoordType" : "EPSG3857",
-                    "reqCoordType" : "WGS84GEO",
-                    "centerLon" : 126.632763,
-                    "centerLat" : 37.651355,
+                    "categories" : "편의점;",
+                    "resCoordType" : "EPSG3857",//응답 좌표계 유형
+                    "reqCoordType" : "WGS84GEO",//요청 좌표계 유형
+                    "centerLon" : lonLat.lon,
+                    "centerLat" : lonLat.lat,
+                    "searchtypCd" : "A",
+                    "radius" : Math.ceil(radius/300),
                     "multiPoint" : "N",
-                    // "radius" : 33,
-                    "appKey" : "5a4a3525-808d-41a4-8968-b84175f11618",
-                    "count" : 10
+                    "appKey" : "5a4a3525-808d-41a4-8968-b84175f11618",//실행을 위한 키입니다. 발급받으신 AppKey를 입력하세요.
+                    "count" : 200//페이지당 출력되는 개수를 지정
                 },
                 success:function(response){
                     var prtcl = response;
@@ -115,33 +109,16 @@ export default {
                     var xmlDoc = $.parseXML( prtclString ),
                     $xml = $( xmlDoc ),
                     $intRate = $xml.find("poi");
-                    $intRate.each(function(index, element) {
-                        var name = element.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+                    $intRate.each(function(index, element){
                         var lon = element.getElementsByTagName("noorLon")[0].childNodes[0].nodeValue;
                         var lat = element.getElementsByTagName("noorLat")[0].childNodes[0].nodeValue;
-                        var telNo = element.getElementsByTagName("telNo")[0].textContent;
-                        var lonlat = new Tmap.LonLat(lon, lat);
-                        var marker = self.makeMarker(lonlat, "o")
-                        var content ="<div style=' position: relative; border-bottom: 1px solid #dcdcdc; line-height: 18px; padding: 0 35px 2px 0;'>"+
-				    "<div style='font-size: 12px; line-height: 15px;'>"+
-				        "<span style='display: inline-block; width: 14px; height: 14px; background-image: url(/resources/images/common/icon_blet.png); vertical-align: middle; margin-right: 5px;'></span>"+name+
-				    "</div>"+telNo
-                 "</div>";
-                        
-			            var popup = new Tmap.Popup("lablePopup",  new Tmap.LonLat(lon, lat),  new Tmap.Size(100,20), content,  true);//popup 생성
-			            popup.autoSize = true;//Contents 내용에 맞게 Popup창의 크기를 재조정할지 여부를 결정
-                        self.map.addPopup(popup);//map에 popup추가
-                        popup.hide();
-                        marker.events.register("mouseover", popup, onOverMarker);
-                        function onOverMarker(evt) {
-                            this.show(); //마커에 마우스가 오버되었을 때 팝업이 보입니다. 
-                        }
-                        marker.events.register("mouseout", popup, onOutMarker);
-                        function onOutMarker(evt) {
-                            this.hide(); //마커에 마우스가 없을땐 팝업이 숨겨집니다.
-                        }
+                        // console.log(element)
+                        var marker = self.makeMarker(new Tmap.LonLat(lon, lat), 'e');
                         self.markerLayer.addMarker(marker);
                     })
+                },
+                error: function(res){
+                    console.log("에러")
                 }
             })
         },

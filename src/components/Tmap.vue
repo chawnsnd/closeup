@@ -1,5 +1,7 @@
 <template>
-    <div id="map" class="map" />
+    <div id="map" class="map">
+        <a href="#" id="link" download="sample.json">download</a>
+    </div>
 </template>
 
 <script>
@@ -89,40 +91,36 @@ export default {
         },
         getPOIfromCategory(lonLat, categories, radius){
             var self = this;
-            $.ajax({
-                method:"GET",
-                url:"https://api2.sktelecom.com/tmap/pois/search/around?version=1&format=xml&callback=result",// 주변 POI 검색 api 요청 url입니다.
-                async:false,
-                data:{
-                    "categories" : "편의점;",
-                    "resCoordType" : "EPSG3857",//응답 좌표계 유형
-                    "reqCoordType" : "WGS84GEO",//요청 좌표계 유형
-                    "centerLon" : lonLat.lon,
-                    "centerLat" : lonLat.lat,
-                    "searchtypCd" : "A",
-                    "radius" : Math.ceil(radius/300),
-                    "multiPoint" : "N",
-                    "appKey" : "5a4a3525-808d-41a4-8968-b84175f11618",//실행을 위한 키입니다. 발급받으신 AppKey를 입력하세요.
-                    "count" : 200//페이지당 출력되는 개수를 지정
-                },
-                success:function(response){
-                    var prtcl = response;
-                    var prtclString = new XMLSerializer().serializeToString(prtcl);
-                    var xmlDoc = $.parseXML( prtclString ),
-                    $xml = $( xmlDoc ),
-                    $intRate = $xml.find("poi");
-                    console.log($intRate)
-                    $intRate.each(function(index, element){
-                        var lon = element.getElementsByTagName("noorLon")[0].childNodes[0].nodeValue;
-                        var lat = element.getElementsByTagName("noorLat")[0].childNodes[0].nodeValue;
+            var params = {
+                "categories" : "편의점;",
+                "resCoordType" : "EPSG3857",//응답 좌표계 유형
+                "reqCoordType" : "WGS84GEO",//요청 좌표계 유형
+                "centerLon" : lonLat.lon,
+                "centerLat" : lonLat.lat,
+                "searchtypCd" : "A",
+                "radius" : Math.ceil(radius/300),
+                "multiPoint" : "N",
+                "appKey" : "5a4a3525-808d-41a4-8968-b84175f11618",//실행을 위한 키입니다. 발급받으신 AppKey를 입력하세요.
+                "count" : 200//페이지당 출력되는 개수를 지정
+            };
+            var url = "https://api2.sktelecom.com/tmap/pois/search/around?version=1&callback=result";
+            $.get( url, params, function(data){
+                if( data ) { // POI 통합검색 요청 성공 시 작업
+                    var pois = data.searchPoiInfo.pois;
+                    Object.keys(pois).forEach(function(key) {
+                        pois = pois[key];
+                    });
+                    pois.forEach(poi => {
+                        var lon = poi.frontLon;
+                        var lat = poi.frontLat;
                         var marker = self.makeMarker(new Tmap.LonLat(lon, lat), 'e');
                         self.markerLayer.addMarker(marker);
-                    })
-                },
-                error: function(res){
-                    console.log("에러")
+                    });
                 }
-            })
+                else {
+                    // alert("검색결과가 없습니다");
+                }
+	  	    });
         }
     },
     mounted() {

@@ -89,11 +89,12 @@ export default {
             this.loading = true;
 	  	    $.get( url, params, function(data){
                 if( data ) { // POI 통합검색 요청 성공 시 작업
+                    self.searchPoiInfo = data.searchPoiInfo;
                     var socket = new WebSocket("ws://127.0.0.1:6789");
                     socket.onopen = function(e){
-                        socket.send(data.searchPoiInfo);
+                        socket.send(self.searchPoiInfo.pois);
                     }
-                    self.searchPoiInfo = data.searchPoiInfo;
+                    socket.close();
                     self.paging.maxPage = Math.ceil(data.searchPoiInfo.totalCount/self.paging.count);
                 }
                 else {

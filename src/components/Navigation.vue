@@ -28,6 +28,12 @@
                 </div>
             </div>
             <div class="place plus" @click="places.push({keyword: '', name: null})">+ 사람추가</div>
+            <div class="place">
+                <div class="placekey">DB저장</div>
+                <div class="searchbar">
+                    <input v-model="dbStoreKeyword" @keyup.enter="dbStore()" type="text" class="input" placeholder="키워드 입력"/>
+                </div>
+            </div>
         </div>
         <div class="btn absolute" @click="recommand">약속장소 추천</div>
         <div class="more">
@@ -64,7 +70,8 @@ export default {
                     name: null
                 }
             ],
-            menuFlag: false
+            menuFlag: false,
+            dbStoreKeyword: ""
         }
     },
     methods:{
@@ -91,6 +98,9 @@ export default {
         removePlace(index){
             this.places.splice(index,1);
             this.eventBus.$emit('removeMarker', index);
+        },
+        dbStore(){
+            this.eventBus.$emit('inputDBStoreKeyword', this.dbStoreKeyword);
         }
     },
     mounted(){

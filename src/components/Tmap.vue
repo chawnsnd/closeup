@@ -61,9 +61,9 @@ export default {
             // 사각형 내 좌표 나누기
             var border = Math.max(bounds.getSize().w, bounds.getSize().h);
             var radius = 9900; //m단위
-            if(border/2 <= radius){
-                radius = border
-            }
+            // if(border/2 <= radius){
+            //     radius = border
+            // }
             var searchCount = border/(radius*Math.sqrt(2));
             if(searchCount >= 3) return alert("검색반경이 너무 넓습니다.")
             for(var i=0; i<=searchCount; i++){
@@ -83,7 +83,7 @@ export default {
                     var circleFeature = new Tmap.Feature.Vector(circle, null, style_red); // 원 백터 생성
 		            vector_layer.addFeatures([circleFeature]); // 원 백터 를 백터 레이어에 추가
                     var lonLat = lonLat.transform("EPSG:3857", "EPSG:4326");
-                    // this.getPOIfromCategory(lonLat, "", radius)
+                    this.getPOIfromCategory(lonLat, "", radius)
                 }
             }
         },
@@ -111,6 +111,7 @@ export default {
                     var xmlDoc = $.parseXML( prtclString ),
                     $xml = $( xmlDoc ),
                     $intRate = $xml.find("poi");
+                    console.log($intRate)
                     $intRate.each(function(index, element){
                         var lon = element.getElementsByTagName("noorLon")[0].childNodes[0].nodeValue;
                         var lat = element.getElementsByTagName("noorLat")[0].childNodes[0].nodeValue;

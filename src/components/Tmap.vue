@@ -1,6 +1,5 @@
 <template>
     <div id="map" class="map">
-        <a href="#" id="link" download="sample.json">download</a>
     </div>
 </template>
 
@@ -63,9 +62,6 @@ export default {
             // 사각형 내 좌표 나누기
             var border = Math.max(bounds.getSize().w, bounds.getSize().h);
             var radius = 9900; //m단위
-            // if(border/2 <= radius){
-            //     radius = border
-            // }
             var searchCount = border/(radius*Math.sqrt(2));
             if(searchCount >= 3) return alert("검색반경이 너무 넓습니다.")
             for(var i=0; i<=searchCount; i++){

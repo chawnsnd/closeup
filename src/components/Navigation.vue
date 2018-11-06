@@ -31,7 +31,7 @@
             <div class="place">
                 <div class="placekey">DB저장</div>
                 <div class="searchbar">
-                    <input v-model="dbStoreKeyword" @keyup.enter="dbStore()" type="text" class="input" placeholder="키워드 입력"/>
+                    <input v-model="dbStoreKeyword" @keyup.enter="onEnter(999)" type="text" class="input" placeholder="키워드 입력(편의점, 노래방, 피씨방 등)"/>
                 </div>
             </div>
         </div>
@@ -92,15 +92,12 @@ export default {
             this.menuFlag = false;
         },
         onEnter(index) {
+            if(index === 999) return this.eventBus.$emit('inputKeyword', this.dbStoreKeyword, index);
             this.eventBus.$emit('inputKeyword', this.places[index].keyword, index);
-            this.suggestPlaces = [];
         },
         removePlace(index){
             this.places.splice(index,1);
             this.eventBus.$emit('removeMarker', index);
-        },
-        dbStore(){
-            this.eventBus.$emit('inputDBStoreKeyword', this.dbStoreKeyword);
         }
     },
     mounted(){

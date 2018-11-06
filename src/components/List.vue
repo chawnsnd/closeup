@@ -58,44 +58,14 @@ export default {
                 if( data ) { // POI 통합검색 요청 성공 시 작업
                     self.searchPoiInfo = data.searchPoiInfo;
                     self.paging.maxPage = Math.ceil(data.searchPoiInfo.totalCount/self.paging.count);
-                    self.clickPOI(self.searchPoiInfo.pois.poi[0]);
-                }
-                else {
-                    // alert("검색결과가 없습니다");
-                }
-	  	    }).then(function(){
-                self.loading = false;
-            });
-        },
-        getTotPOISearchDB(keyword) {
-            this.keyword = keyword;
-            var gAppKey = "5a4a3525-808d-41a4-8968-b84175f11618";
-            var self = this;
-	  	    if(keyword == ''){
-	  		    alert('검색어를 입력해 주세요');
-	  		    return;
-	    	}
-	  	    var url = "https://api2.sktelecom.com/tmap/pois";//POI 검색 api url 입니다
-            var params = {
-                    "version" : "1"//버전
-                    ,"page" : this.paging.curPage//페이지
-                    ,"count"  : this.paging.count//페이지당 검색수
-                    ,"searchKeyword" : this.keyword //검색어
-                    ,"searchtypCd" : "A"//R: 거리순 / A:정확도순
-                    ,"appKey"  : gAppKey //앱키
-                    ,"reqCoordType" : "EPSG3857"
-                    ,"resCoordType" : "EPSG3857"
-            };
-            this.loading = true;
-	  	    $.get( url, params, function(data){
-                if( data ) { // POI 통합검색 요청 성공 시 작업
-                    self.searchPoiInfo = data.searchPoiInfo;
-                    var socket = new WebSocket("ws://127.0.0.1:6789");
-                    socket.onopen = function(e){
-                        socket.send(self.searchPoiInfo.pois);
+                    if(index === 999){
+                        var socket = new WebSocket("ws://127.0.0.1:6789");
+                        socket.onopen = function(e){
+                            socket.send(JSON.stringify(self.searchPoiInfo.pois));
+                        }
+                        return socket.close();
                     }
-                    socket.close();
-                    self.paging.maxPage = Math.ceil(data.searchPoiInfo.totalCount/self.paging.count);
+                    self.clickPOI(self.searchPoiInfo.pois.poi[0]);
                 }
                 else {
                     // alert("검색결과가 없습니다");
@@ -118,7 +88,6 @@ export default {
     },
     mounted() {
         this.eventBus.$on("inputKeyword", this.getTotPOISearch);
-        this.eventBus.$on("inputDBStoreKeyword", this.getTotPOISearchDB);
         this.eventBus.$on("changePage", this.changePage);
     },
     computed: {

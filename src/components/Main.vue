@@ -4,6 +4,7 @@
           <navigation/>
           <list/>
         </div>
+        <recommand />
         <tmap class="absolute" />
     </div>
 </template>
@@ -13,6 +14,7 @@ import SearchBar from "./SearchBar";
 import Tmap from "./Tmap";
 import List from "./List";
 import Navigation from "./Navigation";
+import Recommand from "./Recommand";
 
 export default {
   data() {
@@ -28,7 +30,8 @@ export default {
     "searchbar": SearchBar,
     "tmap": Tmap,
     "list": List,
-    "navigation": Navigation
+    "navigation": Navigation,
+    "recommand": Recommand
   },
   methods: {
   },
@@ -54,6 +57,10 @@ export default {
   }
   .map {
     z-index: -100;
+  }
+  .recommand{
+    float: right;
+    margin: 10px 10px 0 0;
   }
 }
 </style>

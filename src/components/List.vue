@@ -7,10 +7,6 @@
                     <div class="poiname">{{poi.name}}</div>
                     <div class="latlon">{{poi.upperAddrName}} {{poi.middleAddrName}} {{poi.lowerAddrName}} {{poi.detailAddrName}}</div>
                 </div>
-                <div class="right">
-                    <div @click="setA(poi)">A로 지정</div>
-                    <div @click="setB(poi)">B로 지정</div>
-                </div>
             </div>
             <pagination :maxPage="paging.maxPage"/>
         </div>
@@ -32,11 +28,13 @@ export default {
                 curPage: 1,
                 maxPage: 0
             },
-            loading: false
+            loading: false,
+            placeKey: null
         }
     },
     methods: {
-        getTotPOISearch(keyword) {
+        getTotPOISearch(keyword, index) {
+            this.placeKey = index;
             this.keyword = keyword;
             var gAppKey = "5a4a3525-808d-41a4-8968-b84175f11618";
             var self = this;
@@ -60,6 +58,7 @@ export default {
                 if( data ) { // POI 통합검색 요청 성공 시 작업
                     self.searchPoiInfo = data.searchPoiInfo;
                     self.paging.maxPage = Math.ceil(data.searchPoiInfo.totalCount/self.paging.count);
+                    self.clickPOI(self.searchPoiInfo.pois.poi[0]);
                 }
                 else {
                     // alert("검색결과가 없습니다");
@@ -70,16 +69,14 @@ export default {
         },
         changePage(page){
             this.paging.curPage = page;
-            this.getTotPOISearch(this.keyword);
+            this.getTotPOISearch(this.keyword, this.placeKey);
         },
         clickPOI(poi){
-            this.eventBus.$emit('clickPOI', poi)
+            this.eventBus.$emit('clickPOI', poi, this.placeKey)
+            this.setPlace(poi, this.placeKey);
         },
-        setA(poi){
-            this.eventBus.$emit('setA', poi)
-        },
-        setB(poi){
-            this.eventBus.$emit('setB', poi)
+        setPlace(poi, placeKey){
+            this.eventBus.$emit('setPlace', poi, placeKey)
         }
     },
     mounted() {

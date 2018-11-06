@@ -1,8 +1,9 @@
 <template>
     <div class="main">
-        <searchbar class="absolute" />
-        <navigation class="absolute" />
-        <list class="absolute" />
+        <div class="absolute">
+          <navigation/>
+          <list/>
+        </div>
         <tmap class="absolute" />
     </div>
 </template>
@@ -47,18 +48,10 @@ export default {
   position: relative;
   .absolute {
     position: absolute;
+    margin: 10px;
   }
-  .searchbar {
-    margin: 10px 0 0 10px;
-  }
-  .navigation {
-    margin: 80px 0 0 10px;
-  }
-  .btn {
-    margin: 150px 0 0 10px;
-  }
-  .list {
-    margin: 220px 0 0 10px;
+  .absolute * {
+    margin-bottom: 10px;
   }
   .map {
     z-index: -100;

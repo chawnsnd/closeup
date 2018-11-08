@@ -6,6 +6,7 @@
         </div>
         <recommand />
         <tmap class="absolute" />
+        <starpoint-modal />
     </div>
 </template>
 
@@ -15,6 +16,7 @@ import Tmap from "./Tmap";
 import List from "./List";
 import Navigation from "./Navigation";
 import Recommand from "./Recommand";
+import StarPointModal from "./StarPointModal";
 
 export default {
   data() {
@@ -22,7 +24,7 @@ export default {
       map: null,
       markerLayer: null,
       tData: null,
-      recommandFlag: false
+      recommandFlag: false,
     };
   },
   components: {
@@ -30,7 +32,8 @@ export default {
     "tmap": Tmap,
     "list": List,
     "navigation": Navigation,
-    "recommand": Recommand
+    "recommand": Recommand,
+    "starpoint-modal": StarPointModal
   },
   methods: {
     recommandFlag(){
@@ -59,6 +62,9 @@ export default {
   .recommand{
     float: right;
     margin: 10px 10px 0 0;
+  }
+  .starpoint{
+    z-index: 100;
   }
 }
 </style>

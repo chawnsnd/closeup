@@ -112,6 +112,7 @@ export default {
                         var marker = self.makeMarker(new Tmap.LonLat(lon, lat), 'e');
                         self.markerLayer.addMarker(marker);
                     });
+                    this.eventBus.$emit('recommandFlag')
                 }
                 else {
                     // alert("검색결과가 없습니다");

@@ -21,9 +21,8 @@ export default {
     return {
       map: null,
       markerLayer: null,
-      placeA: null,
-      placeB: null,
-      tData: null
+      tData: null,
+      recommandFlag: false
     };
   },
   components: {
@@ -34,14 +33,13 @@ export default {
     "recommand": Recommand
   },
   methods: {
+    recommandFlag(){
+      this.recommandFlag = true;
+    }
   },
-  // mounted() {
-  //   var name = "junwoongCha";
-  //   var exampleSocket = new WebSocket("ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152");
-  //   exampleSocket.onopen = function(event){
-  //     exampleSocket.send(name);
-  //   }
-  // }
+  mounted() {
+    this.eventBus.$on("recommandFlag", this.recommandFlag);
+  }
 };
 </script>
 

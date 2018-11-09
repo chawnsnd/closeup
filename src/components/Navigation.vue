@@ -2,36 +2,36 @@
     <div class="navigation">
         <div class="nav">
             <div class="scroll">
-                <div class="place">
-                    <div class="placekey">1</div>
-                    <div class="searchbar" v-if="places[0].name == null">
-                        <input v-model="places[0].keyword" @keyup.enter="onEnter(0)" type="text" class="input" placeholder="장소 검색"/>
+                <div class="poi">
+                    <div class="poikey">1</div>
+                    <div class="searchbar" v-if="pois[0].name == null">
+                        <input v-model="pois[0].keyword" @keyup.enter="onEnter(0)" type="text" class="input" poiholder="장소 검색"/>
                     </div>
-                    <div class="placename" @click="places[0].name = null" v-else>{{places[0].name}}</div>
+                    <div class="poiname" @click="pois[0].name = null" v-else>{{pois[0].name}}</div>
                 </div>
-                <div class="place">
-                    <div class="placekey">2</div>
-                    <div class="searchbar" v-if="places[1].name == null">
-                        <input v-model="places[1].keyword" @keyup.enter="onEnter(1)" type="text" class="input" placeholder="장소 검색"/>
+                <div class="poi">
+                    <div class="poikey">2</div>
+                    <div class="searchbar" v-if="pois[1].name == null">
+                        <input v-model="pois[1].keyword" @keyup.enter="onEnter(1)" type="text" class="input" poiholder="장소 검색"/>
                     </div>
-                    <div class="placename" @click="places[1].name = null" v-else>{{places[1].name}}</div>
+                    <div class="poiname" @click="pois[1].name = null" v-else>{{pois[1].name}}</div>
                 </div>
-                <div v-for="(place, index) in places" :key="index">
-                    <div class="place" v-if="index>=2">
-                        <div class="placekey">{{index+1}}</div>
-                        <div class="searchbar" v-if="places[index].name == null">
-                            <input v-model="places[index].keyword" @keyup.enter="onEnter(index)" type="text" class="input" placeholder="장소 검색"/>
+                <div v-for="(poi, index) in pois" :key="index">
+                    <div class="poi" v-if="index>=2">
+                        <div class="poikey">{{index+1}}</div>
+                        <div class="searchbar" v-if="pois[index].name == null">
+                            <input v-model="pois[index].keyword" @keyup.enter="onEnter(index)" type="text" class="input" poiholder="장소 검색"/>
                         </div>
-                        <div class="placename" @click="places[index].name = null" v-else>{{places[index].name}}</div>
-                        <div class="remove" @click="removePlace(index)">-</div>
+                        <div class="poiname" @click="pois[index].name = null" v-else>{{pois[index].name}}</div>
+                        <div class="remove" @click="removePoi(index)">-</div>
                     </div>
                 </div>
             </div>
-            <div class="place plus" @click="places.push({keyword: '', name: null})">+ 사람추가</div>
-            <div class="place">
-                <div class="placekey">DB저장</div>
+            <div class="poi plus" @click="pois.push({keyword: '', name: null})">+ 사람추가</div>
+            <div class="poi">
+                <div class="poikey">DB저장</div>
                 <div class="searchbar">
-                    <input v-model="dbStoreKeyword" @keyup.enter="onEnter(999)" type="text" class="input" placeholder="키워드 입력(편의점, 노래방, 피씨방 등)"/>
+                    <input v-model="dbStoreKeyword" @keyup.enter="onEnter(999)" type="text" class="input" poiholder="키워드 입력(편의점, 노래방, 피씨방 등)"/>
                 </div>
             </div>
         </div>
@@ -43,7 +43,7 @@
                 <label><input type="checkbox"/>노래방</label>
                 <label><input type="checkbox"/>식당</label>
                 <label><input type="checkbox"/>호프</label>
-                <input type="checkbox"/><input type="text" placeholder="기타" width="50px"/>
+                <input type="checkbox"/><input type="text" poiholder="기타" width="50px"/>
             </div>
             <div class="moretap" @click="menuFlag = !menuFlag">::</div>
         </div>
@@ -60,7 +60,7 @@ export default {
     },
     data() {
         return{
-            places: [
+            pois: [
                 {
                     keyword: "",
                     name: null
@@ -75,33 +75,32 @@ export default {
         }
     },
     methods:{
-        setPlace(place, index){
-            this.places[index].info = place;
-            this.places[index].name = place.name;
-            this.places[index].keyword = place.name;
+        setPoi(poi, index){
+            this.pois[index].info = poi;
+            this.pois[index].name = poi.name;
+            this.pois[index].keyword = poi.name;
         },
         recommand(){
-            this.places.forEach(place => {
-                if(place.name === null) return alert("않이! 사람을 추가했으면 장소를 채우셔야죠");
+            this.pois.forEach(poi => {
+                if(poi.name === null) return alert("않이! 사람을 추가했으면 장소를 채우셔야죠");
             });
-            var places = [];
-            this.places.forEach(place => {
-                places.push(place.info);
+            this.pois.forEach(poi => {
+                pois.push(poi.info);
             });
-            this.eventBus.$emit('recommand', places);
+            this.eventBus.$emit('recommand', pois);
             this.menuFlag = false;
         },
         onEnter(index) {
             if(index === 999) return this.eventBus.$emit('inputKeyword', this.dbStoreKeyword, index);
-            this.eventBus.$emit('inputKeyword', this.places[index].keyword, index);
+            this.eventBus.$emit('inputKeyword', this.pois[index].keyword, index);
         },
-        removePlace(index){
-            this.places.splice(index,1);
+        removePoi(index){
+            this.pois.splice(index,1);
             this.eventBus.$emit('removeMarker', index);
         }
     },
     mounted(){
-        this.eventBus.$on("setPlace", this.setPlace);
+        this.eventBus.$on("setPoi", this.setPoi);
     }
 }
 </script>
@@ -119,14 +118,14 @@ export default {
     max-height:156px;
     -ms-overflow-style: none;
 }
-.place{
+.poi{
     border: 1px solid #eaeaea;
     padding: 15px;
     color: #5fc694;
     display: flex;
     height: 20px;
 }
-.placekey{
+.poikey{
     flex: 1;
     text-align: left;
 }
@@ -145,7 +144,7 @@ export default {
     width: 100%;
     outline: none;
 }
-.placename{
+.poiname{
     text-align: left;
     flex: 10;
     color: black;
@@ -158,8 +157,6 @@ export default {
     cursor: pointer;
     text-align: center;
 }
-
-
 
 .btn {
     display: inline-block;

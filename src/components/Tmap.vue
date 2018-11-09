@@ -4,22 +4,24 @@
 </template>
 
 <script>
+import MarkerPopup from "./MarkerPopup";
+import recommandPois from "../tmp/recommandPois"
 export default {
+    components: {
+        'marker-popup': MarkerPopup
+    },
     data() {
         return {
             map: null,
             markerLayer: null,
             vectorLayer: null,
             tData: null,
-            markers: []
+            personMarkers: [],
+            poisMarkers: [],
+            recommandPois: recommandPois
         }
     },
     methods: {
-        resizeBrowser(){
-            var map = document.getElementById('map');
-            map.style.width = '100%';
-            this.map.updateSize();
-        },
         initTmap() {
             this.map = new Tmap.Map({
                 div: "map",
@@ -31,103 +33,52 @@ export default {
             this.map.addLayer(this.markerLayer); //map에 마커 레이어 추가
             this.tData = new Tmap.TData();
         },
-        makeMarker(lonlat, str) {
+        makeMarker(poi, str='x') {
+            var lonlat = new Tmap.LonLat(poi.frontLon, poi.frontLat);
+            var markerStr = (str==='x') ? 'x' : String(person+1);
+            var label = new Tmap.Label(poi.name);
             var size = new Tmap.Size(24, 38);//아이콘 크기 설정
 	    	var offset = new Tmap.Pixel(-(size.w / 2), -(size.h));//아이콘 중심점 설정
             var icon = new Tmap.Icon('http://tmapapis.sktelecom.com/upload/tmap/marker/pin_b_m_'+str+'.png',size, offset);//마커 아이콘 설정
-            return new Tmap.Marker(lonlat, icon);//마커 생성
+            var marker = new Tmap.Marker(lonlat, icon, label);//마커 생성
+            //마커에 poi정보를 나타낼 수 있는 팝업 등록
+            return marker 
         },
-        removeMarker(index){
-            if(this.markers[index] != null){
-                this.markerLayer.removeMarker(this.markers[index]);
-            }
-        },
-        clickPOI(place, placeKey){
-            if(this.markers[placeKey] != null){
-                this.markerLayer.removeMarker(this.markers[placeKey]);
-            }
-            var lonlat = new Tmap.LonLat(place.frontLon, place.frontLat).transform("EPSG:3857", "EPSG:3857")
+        setPersonMarker(poi, person){
+            if(this.personMarkers[person] != null) this.markerLayer.removeMarker(this.personMarkers[person]);
+            var marker = this.makeMarker(poi);
+            this.personMarkers[person] = marker;
+            this.markerLayer.addMarker(this.personMarkers[person]);
             this.map.setCenter(lonlat, 15);
-            this.markers[placeKey] = this.makeMarker(lonlat, String(placeKey+1));
-            this.markerLayer.addMarker(this.markers[placeKey]);
         },
-        recommand(places){
-            // 사각형 바운드 그리기
-            var bounds = new Tmap.Bounds();
-            places.forEach(place => {
-                var lonLat = new Tmap.LonLat(Number(place.frontLon), Number(place.frontLat));
-                bounds.extend(lonLat);
+        setPoismarker(Pois){
+            this.poisMarkers.forEach(poisMarker => { this.markerLayer.removeMarker(poisMarker) });
+            this.poisMarkers = [];
+            Pois.forEach(Poi => {
+                var marker = this.makeMarker(Poi);
+                this.poisMarkers.push(marker);
+                this.markerLayer.addMarker(marker);
             });
-            this.map.zoomToExtent(bounds);
-            // 사각형 내 좌표 나누기
-            var border = Math.max(bounds.getSize().w, bounds.getSize().h);
-            var radius = 9900; //m단위
-            var searchCount = border/(radius*Math.sqrt(2));
-            if(searchCount >= 3) return alert("검색반경이 너무 넓습니다.")
-            for(var i=0; i<=searchCount; i++){
-                for(var j=0; j<=searchCount; j++){
-                    var lonLat = new Tmap.LonLat((bounds.getCenterLonLat().lon-border/2)+i*(border/searchCount), (bounds.getCenterLonLat().lat+border/2)-j*(border/searchCount));
-                    var vector_layer = new Tmap.Layer.Vector('Tmap Vector Layer'); // 백터 레이어 생성
-                    this.map.addLayers([vector_layer]); 
-                    var circle = new Tmap.Geometry.Circle(lonLat.lon, lonLat.lat, radius); // 원 생성
-                    var style_red = {
-                        fillColor:"#FF0000",
-                        fillOpacity:0.2,
-                        strokeColor: "#FF0000",
-                        strokeWidth: 3,
-                        strokeDashstyle: "solid",
-                        pointRadius: 60
-                    };
-                    var circleFeature = new Tmap.Feature.Vector(circle, null, style_red); // 원 백터 생성
-		            vector_layer.addFeatures([circleFeature]); // 원 백터 를 백터 레이어에 추가
-                    var lonLat = lonLat.transform("EPSG:3857", "EPSG:4326");
-                    this.getPOIfromCategory(lonLat, "", radius)
-                }
-            }
+            this.poisMarkers.forEach(poisMarker => {
+                //보더에 등록
+            })
+            //보더에 맞게 뷰 적용
         },
-        getPOIfromCategory(lonLat, categories, radius){
-            var self = this;
-            var params = {
-                "categories" : "편의점;",
-                "resCoordType" : "EPSG3857",//응답 좌표계 유형
-                "reqCoordType" : "WGS84GEO",//요청 좌표계 유형
-                "centerLon" : lonLat.lon,
-                "centerLat" : lonLat.lat,
-                "searchtypCd" : "A",
-                "radius" : Math.ceil(radius/300),
-                "multiPoint" : "N",
-                "appKey" : "5a4a3525-808d-41a4-8968-b84175f11618",//실행을 위한 키입니다. 발급받으신 AppKey를 입력하세요.
-                "count" : 200//페이지당 출력되는 개수를 지정
-            };
-            var url = "https://api2.sktelecom.com/tmap/pois/search/around?version=1&callback=result";
-            $.get( url, params, function(data){
-                if( data ) { // POI 통합검색 요청 성공 시 작업
-                    var pois = data.searchPoiInfo.pois;
-                    Object.keys(pois).forEach(function(key) {
-                        pois = pois[key];
-                    });
-                    pois.forEach(poi => {
-                        var lon = poi.frontLon;
-                        var lat = poi.frontLat;
-                        var marker = self.makeMarker(new Tmap.LonLat(lon, lat), 'e');
-                        self.markerLayer.addMarker(marker);
-                    });
-                    this.eventBus.$emit('recommandFlag')
-                }
-                else {
-                    // alert("검색결과가 없습니다");
-                }
-	  	    });
+        setCenter(lon, lat){
+            var lonLat = new Tmap.LonLat(lon, lat);
+            this.map.setCenter(lonLat, 15);
         }
     },
     mounted() {
-        window.addEventListener('resize', this.resizeBrowser);
+        window.addEventListener('resize', function(){
+            var map = document.getElementById('map');
+            map.style.width = '100%';
+            this.map.updateSize();
+        });
         this.initTmap();
-        this.eventBus.$on("setA", this.setA);
-        this.eventBus.$on("setB", this.setB);
-        this.eventBus.$on("clickPOI", this.clickPOI);
-        this.eventBus.$on("recommand", this.recommand);
-        this.eventBus.$on("removeMarker", this.removeMarker);
+        this.eventBus.$on("setCenter", this.setCenter);
+        this.eventBus.$on("setPersonMarker", this.setPersonMarker);
+        this.setPoismarker(this.recommandPois);
     }
 }
 </script>

@@ -1,8 +1,8 @@
 <template>
-    <div v-if="searchPoiInfo != null" class="list">
+    <div v-if="pois != null" class="list">
         <div class="pois" :class="{'disable': loading}">
-            <div class="count">{{(paging.curPage-1)*10+1}} ~ {{(paging.curPage)*10}} / {{searchPoiInfo.totalCount}}</div>
-            <div class="poi" v-for="(poi, index) in searchPoiInfo.pois.poi" :key="index">
+            <div class="count">{{(paging.curPage-1)*10+1}} ~ {{(paging.curPage)*10}} / {{pois.totalCount}}</div>
+            <div class="poi" v-for="(poi, index) in pois" :key="index">
                 <div class="left" @click="clickPOI(poi)">
                     <div class="poiname">{{poi.name}}</div>
                     <div class="latlon">{{poi.upperAddrName}} {{poi.middleAddrName}} {{poi.lowerAddrName}} {{poi.detailAddrName}}</div>
@@ -22,26 +22,26 @@ export default {
     },
     data() {
         return{
-            searchPoiInfo: null,
+            pois: null,
             paging: {
                 count: 10,
                 curPage: 1,
                 maxPage: 0
             },
             loading: false,
-            placeKey: null
+            gAppKey: "5a4a3525-808d-41a4-8968-b84175f11618",
+            keyword: ""
         }
     },
     methods: {
-        getTotPOISearch(keyword, index) {
-            this.placeKey = index;
+        inputKeyword(keyword, index){
+            if(keyword == '') return alert('검색어를 입력해 주세요');
             this.keyword = keyword;
-            var gAppKey = "5a4a3525-808d-41a4-8968-b84175f11618";
+            this.person = index;
+            this.getTotPOISearch()
+        },
+        getTotPOISearch() {
             var self = this;
-	  	    if(keyword == ''){
-	  		    alert('검색어를 입력해 주세요');
-	  		    return;
-	    	}
 	  	    var url = "https://api2.sktelecom.com/tmap/pois";//POI 검색 api url 입니다
             var params = {
                     "version" : "1"//버전
@@ -49,45 +49,42 @@ export default {
                     ,"count"  : this.paging.count//페이지당 검색수
                     ,"searchKeyword" : this.keyword //검색어
                     ,"searchtypCd" : "A"//R: 거리순 / A:정확도순
-                    ,"appKey"  : gAppKey //앱키
+                    ,"appKey"  : this.gAppKey //앱키
                     ,"reqCoordType" : "EPSG3857"
                     ,"resCoordType" : "EPSG3857"
             };
             this.loading = true;
 	  	    $.get( url, params, function(data){
                 if( data ) { // POI 통합검색 요청 성공 시 작업
-                    self.searchPoiInfo = data.searchPoiInfo;
+                    self.pois = data.searchPoiInfo.pois.poi;
+                    console.log(data)
                     self.paging.maxPage = Math.ceil(data.searchPoiInfo.totalCount/self.paging.count);
-                    if(index === 999){
-                        var socket = new WebSocket("ws://127.0.0.1:6789");
-                        socket.onopen = function(e){
-                            socket.send(JSON.stringify(self.searchPoiInfo.pois));
-                        }
-                        return socket.close();
-                    }
-                    self.clickPOI(self.searchPoiInfo.pois.poi[0]);
+                    if(this.person === 999) return this.dbStore(data.searchPoiInfo.pois.poi);
+                    self.clickPOI(self.pois[0]);
                 }
                 else {
-                    // alert("검색결과가 없습니다");
+                    console.log("검색결과가 없습니다");
                 }
 	  	    }).then(function(){
                 self.loading = false;
             });
         },
+        dbStore(pois){
+            var socket = new WebSocket("ws://127.0.0.1:6789");
+            socket.onopen = function(e){ socket.send(JSON.stringify(pois)) }
+            return socket.close();
+        },
         changePage(page){
             this.paging.curPage = page;
-            this.getTotPOISearch(this.keyword, this.placeKey);
+            this.getTotPOISearch(this.keyword, this.person);
         },
         clickPOI(poi){
-            this.eventBus.$emit('clickPOI', poi, this.placeKey)
-            this.setPlace(poi, this.placeKey);
-        },
-        setPlace(poi, placeKey){
-            this.eventBus.$emit('setPlace', poi, placeKey)
+            this.eventBus.$emit('setPersonMarker', poi, this.person)
+            this.eventBus.$emit('setPerson', poi, this.person)
         }
     },
     mounted() {
-        this.eventBus.$on("inputKeyword", this.getTotPOISearch);
+        this.eventBus.$on("inputKeyword", this.inputKeyword);
         this.eventBus.$on("changePage", this.changePage);
     },
     computed: {

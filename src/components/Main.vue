@@ -6,7 +6,7 @@
         </div>
         <recommand />
         <tmap class="absolute" />
-        <starpoint-modal />
+        <starpoint v-if="showStarpointModal" @close="showStarpointModal=false" class="modal"/>
     </div>
 </template>
 
@@ -16,7 +16,7 @@ import Tmap from "./Tmap";
 import List from "./List";
 import Navigation from "./Navigation";
 import Recommand from "./Recommand";
-import StarPointModal from "./StarPointModal";
+import StarPoint from "./StarPoint";
 
 export default {
   data() {
@@ -24,7 +24,8 @@ export default {
       map: null,
       markerLayer: null,
       tData: null,
-      recommandFlag: false,
+      // recommandFlag: false,
+      showStarpointModal: true
     };
   },
   components: {
@@ -33,15 +34,19 @@ export default {
     "list": List,
     "navigation": Navigation,
     "recommand": Recommand,
-    "starpoint-modal": StarPointModal
+    "starpoint": StarPoint
   },
   methods: {
-    recommandFlag(){
-      this.recommandFlag = true;
+    // recommandFlag(){
+    //   this.recommandFlag = true;
+    // }
+    closeStarPoint(){
+      this.showStarpointModal = false;
     }
   },
   mounted() {
     this.eventBus.$on("recommandFlag", this.recommandFlag);
+    this.eventBus.$on('closeStarpoint', this.closeStarPoint);
   }
 };
 </script>
@@ -62,9 +67,6 @@ export default {
   .recommand{
     float: right;
     margin: 10px 10px 0 0;
-  }
-  .starpoint{
-    z-index: 100;
   }
 }
 </style>

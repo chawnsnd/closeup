@@ -77,9 +77,6 @@ export default {
         margin-left: 5px;
     }
 }
-.line *{
-    display: inline-block;
-}
 .first{
     font-size: 20px;
     font-weight: bold;

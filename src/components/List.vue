@@ -57,7 +57,6 @@ export default {
 	  	    $.get( url, params, function(data){
                 if( data ) { // POI 통합검색 요청 성공 시 작업
                     self.pois = data.searchPoiInfo.pois.poi;
-                    console.log(data)
                     self.paging.maxPage = Math.ceil(data.searchPoiInfo.totalCount/self.paging.count);
                     if(this.person === 999) return this.dbStore(data.searchPoiInfo.pois.poi);
                     self.clickPOI(self.pois[0]);
@@ -101,7 +100,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .list{
     background-color: white;
     border: 1px solid #eaeaea;

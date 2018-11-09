@@ -52,7 +52,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .pagination{
     text-align: center;
 }

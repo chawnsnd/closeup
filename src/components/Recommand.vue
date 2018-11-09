@@ -1,13 +1,13 @@
 <template>
-    <div class="recommand">
+    <div class="recommand" v-if="pois!=null">
         <div class="title"> <span>CloseUp</span>이 추천하는 BEST 장소</div>
-        <div class="r_poi" v-for="(poi, index) in pois" :key="index" @click="clickPOI(poi)">
+        <div class="r_poi" v-for="(poi, index) in pois" :key="index" @click="clickPoi(poi)">
             <div class="img"><img :src="poi.image" width="100px" height="100px"/></div>
             <div class="info">
                 <div class="first line">
                     <span class="name">{{index+1}}. {{poi.name}}</span>
-                    <span class="score">{{poi.score}}점</span>
                 </div>
+                <div class="score"><span>{{poi.score}}</span>점</div>
                 <div class="second line">
                     <div class="address">{{poi.upperAddrName}} {{poi.middleAddrName}} {{poi.lowerAddrName}} {{poi.detailAddrName}}</div>
                     <div class="tel">TEL: {{poi.telNo}}</div>
@@ -16,11 +16,8 @@
                     <span class="category" v-for="(category, index) in poi.categories" :key="index">{{category}}</span>
                 </div>
                 <div class="fourth line">
-                    <span class="starpoint" v-for="point in 5" :key="point">
-                        <i class="fas fa-star" v-if="poi.starPoint>=point"></i>
-                        <i class="far fa-star" v-else></i>
-                    </span>
-                    <span>({{poi.starPoint}})</span>
+                    <span class="starpoint"><i class="fas fa-star"></i> {{poi.starPoint}}</span>
+                    <span class="evaluate" @click="starPoint(poi)">평가하기</span>
                     <span class="google" @click="googleSearch(poi.name)">구글검색</span>
                 </div>
             </div>
@@ -28,24 +25,26 @@
     </div>
 </template>
 <script>
-import recommandPois from "../tmp/recommandPois"
 export default {
+    props: ['pois'],
     data(){
         return {
-            pois: recommandPois
         }
     },
     methods: {
         googleSearch(keyword){
             window.open(`https://www.google.co.kr/search?q=${keyword}`);
         },
-        clickPOI(poi){
-            this.eventBus.$emit('setCenter', poi.lon, poi.lat);
+        clickPoi(poi){
+            this.eventBus.$emit('setCenter', poi.frontLon, poi.frontLat);
+        },
+        starPoint(poi){
+            this.eventBus.$emit('showStarPoint', poi);
         }
     }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .recommand{
     background-color: white;
     border: 1px solid #eaeaea;
@@ -84,14 +83,22 @@ export default {
 .first{
     font-size: 20px;
     font-weight: bold;
-    .score{
-        float: right;
-        color: black;
-        font-size: 15px;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+    margin-bottom: 15px;
+}
+.score{
+    float: right;
+    span{
+        color: red;
     }
+    font-size: 15px;
+    font-weight: bold;
 }
 .second{
     font-size: 12px;
+    margin-bottom: 5px;
 }
 .category{
     margin-right: 10px;
@@ -104,8 +111,17 @@ export default {
 .starpoint{
     color: gold;
 }
+.evaluate{
+    margin-left: 5px;
+    color: #ff2f6e;
+    font-size: 13px;
+    &:hover{
+        text-decoration: underline;
+    }
+}
 .google{
     float: right;
+    font-size: 12px;
     &:hover{
         text-decoration: underline;
     }

@@ -35,15 +35,15 @@
                 </div>
             </div>
         </div>
-        <div class="btn absolute" @click="recommand">약속장소 추천</div>
+        <div class="btn absolute" @click="clickRecommand">약속장소 추천</div>
         <div class="more">
             <div v-if="menuFlag" class="menu">
-                <label><input type="checkbox"/>전체</label>
-                <label><input type="checkbox"/>카페</label>
-                <label><input type="checkbox"/>노래방</label>
-                <label><input type="checkbox"/>식당</label>
-                <label><input type="checkbox"/>호프</label>
-                <input type="checkbox"/><input type="text" poiholder="기타" width="50px"/>
+                <label><input v-model="categories" type="checkbox"/>전체</label>
+                <label><input v-model="categories" type="checkbox"/>카페</label>
+                <label><input v-model="categories" type="checkbox"/>노래방</label>
+                <label><input v-model="categories" type="checkbox"/>식당</label>
+                <label><input v-model="categories" type="checkbox"/>호프</label>
+                <input v-model="categories" type="checkbox"/><input v-model="categories" type="text" poiholder="기타" width="50px"/>
             </div>
             <div class="moretap" @click="menuFlag = !menuFlag">::</div>
         </div>
@@ -52,6 +52,7 @@
 </template>
 
 <script>
+import recommandPois from "../tmp/recommandPois"
 import Btn from "./Btn";
 
 export default {
@@ -70,25 +71,30 @@ export default {
                     name: null
                 }
             ],
+            paramPois: [],
+            recommandPois: recommandPois,
             menuFlag: false,
+            categories: [],
             dbStoreKeyword: ""
         }
     },
     methods:{
-        setPoi(poi, index){
-            this.pois[index].info = poi;
+        setPerson(poi, index){
+            this.paramPois.push(poi);
             this.pois[index].name = poi.name;
             this.pois[index].keyword = poi.name;
         },
-        recommand(){
+        clickRecommand(){
             this.pois.forEach(poi => {
                 if(poi.name === null) return alert("않이! 사람을 추가했으면 장소를 채우셔야죠");
             });
-            this.pois.forEach(poi => {
-                pois.push(poi.info);
-            });
-            this.eventBus.$emit('recommand', pois);
+            this.recommand();
             this.menuFlag = false;
+        },
+        recommand(){
+            // this.param.pois를 통해 recommandPois를 얻을 것
+            this.eventBus.$emit('showRecommandComponent', this.recommandPois);
+            this.eventBus.$emit('setPoisMarker', this.recommandPois);
         },
         onEnter(index) {
             if(index === 999) return this.eventBus.$emit('inputKeyword', this.dbStoreKeyword, index);
@@ -100,13 +106,13 @@ export default {
         }
     },
     mounted(){
-        this.eventBus.$on("setPoi", this.setPoi);
+        this.eventBus.$on("setPerson", this.setPerson);
     }
 }
 </script>
 
 
-<style>
+<style lang="scss" scoped>
 .nav{
     background-color: white;
     border: 1px solid #eaeaea;

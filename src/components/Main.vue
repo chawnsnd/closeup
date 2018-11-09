@@ -4,9 +4,9 @@
           <navigation/>
           <list/>
         </div>
-        <recommand />
+        <recommand v-if="showRecommandComponent" v-bind:pois = recommandPois />
         <tmap class="absolute" />
-        <starpoint v-if="showStarpointModal" @close="showStarpointModal=false" class="modal"/>
+        <starpoint v-if="showStarPointModal" v-bind:poi = starPointPoi @close="showStarPointModal=false" class="modal"/>
     </div>
 </template>
 
@@ -16,7 +16,7 @@ import Tmap from "./Tmap";
 import List from "./List";
 import Navigation from "./Navigation";
 import Recommand from "./Recommand";
-import StarPoint from "./StarPoint";
+import starPoint from "./starPoint";
 
 export default {
   data() {
@@ -25,7 +25,10 @@ export default {
       markerLayer: null,
       tData: null,
       // recommandFlag: false,
-      showStarpointModal: true
+      showStarPointModal: false,
+      starPointPoi: null,
+      showRecommandComponent: false,
+      recommandPois: []
     };
   },
   components: {
@@ -34,19 +37,22 @@ export default {
     "list": List,
     "navigation": Navigation,
     "recommand": Recommand,
-    "starpoint": StarPoint
+    "starpoint": starPoint
   },
   methods: {
-    // recommandFlag(){
-    //   this.recommandFlag = true;
-    // }
-    closeStarPoint(){
-      this.showStarpointModal = false;
+    showRecommand(pois){
+      this.showRecommandComponent = true;
+      this.recommandPois = pois;
+    },
+    showStarPoint(poi){
+      this.showStarPointModal = true;
+      this.starPointPoi = poi
     }
   },
   mounted() {
     this.eventBus.$on("recommandFlag", this.recommandFlag);
-    this.eventBus.$on('closeStarpoint', this.closeStarPoint);
+    this.eventBus.$on('showStarPoint', this.showStarPoint);
+    this.eventBus.$on('showRecommandComponent', this.showRecommand);
   }
 };
 </script>

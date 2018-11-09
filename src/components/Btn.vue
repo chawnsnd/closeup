@@ -8,7 +8,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .btn {
     text-align: center;
     cursor: pointer;

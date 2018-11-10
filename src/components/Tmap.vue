@@ -134,14 +134,14 @@ export default {
           var xmlDoc = $.parseXML(prtclString),
             $xml = $(xmlDoc),
             $intRate = $xml.find("poi");
-          /*           $intRate.each(function(index, element) {
+          $intRate.each(function(index, element) {
             var lon = element.getElementsByTagName("noorLon")[0].childNodes[0]
               .nodeValue;
             var lat = element.getElementsByTagName("noorLat")[0].childNodes[0]
               .nodeValue;
             var id = element.getElementsByTagName("id")[0].childNodes[0]
               .nodeValue;
-            var category = element.getElementById()
+            var category = element.getElementById();
             var poi = [];
             poi.push(id);
             poi.push(new Tmap.LonLat(lon, lat));
@@ -150,8 +150,10 @@ export default {
 
             // self.pois.push(new Tmap.LonLat(lon, lat));
             self.pois.push(poi);
-          }); */
-          var exampleSocket = new WebSocket("ws://127.0.0.1:6789/");
+          });
+          var exampleSocket = new WebSocket(
+            "ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152/"
+          );
           exampleSocket.onopen = function(event) {
             // exampleSocket.send("recommend Button pushed");
             exampleSocket.send(
@@ -164,10 +166,10 @@ export default {
             var data = JSON.parse(event.data);
             data.forEach(poi => {
               console.log(poi["lat"], poi["lon"]);
-              var lon = poi["lon"]
-              var lat = poi["lat"]
+              var lon = poi["lon"];
+              var lat = poi["lat"];
               var lonlat = new Tmap.LonLat(lon, lat); //Icon 좌표 설정합니다.
-              console.log(lonlat)
+              console.log(lonlat);
               var size = new Tmap.Size(24, 38); //Icon 크기 설정합니다.
               var offset = new Tmap.Pixel(-(size.w / 2), -size.h); //Icon 중심점 설정
               var icon = new Tmap.Icon(
@@ -175,7 +177,6 @@ export default {
                 size,
                 offset
               ); //Icon 설정합니다.
-
               var marker = new Tmap.Marker(lonlat, icon); //생성한 값들을 이용하여 marker 생성합니다.
               self.markerLayer.addMarker(marker); //layer에 marker 추가합니다.
             });

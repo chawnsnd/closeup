@@ -16,7 +16,7 @@ import Tmap from "./Tmap";
 import List from "./List";
 import Navigation from "./Navigation";
 import Recommand from "./Recommand";
-import starPoint from "./starPoint";
+import StarPoint from "./StarPoint";
 
 export default {
   data() {
@@ -37,7 +37,7 @@ export default {
     "list": List,
     "navigation": Navigation,
     "recommand": Recommand,
-    "starpoint": starPoint
+    "starpoint": StarPoint
   },
   methods: {
     showRecommand(pois){

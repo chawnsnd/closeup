@@ -141,12 +141,11 @@ export default {
               .nodeValue;
             var id = element.getElementsByTagName("id")[0].childNodes[0]
               .nodeValue;
-            var category = element.getElementById();
             var poi = [];
             poi.push(id);
             poi.push(new Tmap.LonLat(lon, lat));
-            var marker = self.makeMarker(new Tmap.LonLat(lon, lat), "e");
-            self.markerLayer.addMarker(marker);
+            // var marker = self.makeMarker(new Tmap.LonLat(lon, lat), "e");
+            // self.markerLayer.addMarker(marker);
 
             // self.pois.push(new Tmap.LonLat(lon, lat));
             self.pois.push(poi);

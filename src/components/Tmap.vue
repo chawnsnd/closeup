@@ -11,7 +11,7 @@ export default {
       vectorLayer: null,
       tData: null,
       markers: [],
-      persons: [],
+      selectedPeople: [],
       pois: []
     };
   },
@@ -69,7 +69,7 @@ export default {
           Number(place.frontLon),
           Number(place.frontLat)
         );
-        this.persons.push(lonLat);
+        this.selectedPeople.push(lonLat);
         bounds.extend(lonLat);
       });
       this.map.zoomToExtent(bounds);
@@ -142,43 +142,56 @@ export default {
             var id = element.getElementsByTagName("id")[0].childNodes[0]
               .nodeValue;
             var poi = [];
-            poi.push(id);
-            poi.push(new Tmap.LonLat(lon, lat));
+            var lonlat = new Tmap.LonLat(lon, lat);
+            poi = { id: id, lat: lonlat["lat"], lon: lonlat["lon"] };
             // var marker = self.makeMarker(new Tmap.LonLat(lon, lat), "e");
             // self.markerLayer.addMarker(marker);
 
             // self.pois.push(new Tmap.LonLat(lon, lat));
             self.pois.push(poi);
           });
-          var exampleSocket = new WebSocket(
-            "ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152/"
-          );
-          exampleSocket.onopen = function(event) {
-            // exampleSocket.send("recommend Button pushed");
-            exampleSocket.send(
-              JSON.stringify({ command:"insert_pois",pois: self.pois, persons: self.persons })
+          var socket = new WebSocket("ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152/");
+          socket.onopen = function(event) {
+            // socket.send("recommend Button pushed");
+            socket.send(
+              /* JSON.stringify({
+                command: "insert_pois",
+                pois: self.pois,
+                selectedPeople: self.selectedPeople,
+                categories: ["치킨집"]
+              }) */
+              JSON.stringify({
+                command: "query_square_bound",
+                pois: self.pois,
+                selectedPeople: self.selectedPeople,
+                categories: ["치킨집"]
+              })
             );
-            exampleSocket.onmessage();
+            socket.onmessage();
           };
-          //사각형 바운드에 있는것만 받기
-          exampleSocket.onmessage = function(event) {
+          //리스폰스에 따라 반응하기
+          socket.onmessage = function(event) {
             var data = JSON.parse(event.data);
-            data.forEach(poi => {
-              console.log(poi["lat"], poi["lon"]);
-              var lon = poi["lon"];
-              var lat = poi["lat"];
-              var lonlat = new Tmap.LonLat(lon, lat); //Icon 좌표 설정합니다.
-              console.log(lonlat);
-              var size = new Tmap.Size(24, 38); //Icon 크기 설정합니다.
-              var offset = new Tmap.Pixel(-(size.w / 2), -size.h); //Icon 중심점 설정
-              var icon = new Tmap.Icon(
-                "http://tmapapis.sktelecom.com/upload/tmap/marker/pin_b_m_a.png",
-                size,
-                offset
-              ); //Icon 설정합니다.
-              var marker = new Tmap.Marker(lonlat, icon); //생성한 값들을 이용하여 marker 생성합니다.
-              self.markerLayer.addMarker(marker); //layer에 marker 추가합니다.
-            });
+            if (data.type == "insert_pois") {
+              console.log(data.response);
+            } else if (data.type == "query_square_bound") {
+              data.pois.forEach(poi => {
+                console.log(poi["lat"], poi["lon"]);
+                var lon = poi["lon"];
+                var lat = poi["lat"];
+                var lonlat = new Tmap.LonLat(lon, lat); //Icon 좌표 설정합니다.
+                console.log(lonlat);
+                var size = new Tmap.Size(24, 38); //Icon 크기 설정합니다.
+                var offset = new Tmap.Pixel(-(size.w / 2), -size.h); //Icon 중심점 설정
+                var icon = new Tmap.Icon(
+                  "http://tmapapis.sktelecom.com/upload/tmap/marker/pin_b_m_a.png",
+                  size,
+                  offset
+                ); //Icon 설정합니다.
+                var marker = new Tmap.Marker(lonlat, icon); //생성한 값들을 이용하여 marker 생성합니다.
+                self.markerLayer.addMarker(marker); //layer에 marker 추가합니다.
+              });
+            }
           };
         },
         error: function(res) {

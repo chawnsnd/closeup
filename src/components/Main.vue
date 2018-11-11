@@ -33,6 +33,12 @@ export default {
   },
   methods: {},
   mounted() {
+    var name = "connect()";
+    // var exampleSocket = new WebSocket("ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152");
+    var exampleSocket = new WebSocket("ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152/");
+    exampleSocket.onopen = function(event) {
+      exampleSocket.send(JSON.stringify({command:name}));
+    };
   }
 };
 </script>

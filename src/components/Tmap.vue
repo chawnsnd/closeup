@@ -156,7 +156,7 @@ export default {
           exampleSocket.onopen = function(event) {
             // exampleSocket.send("recommend Button pushed");
             exampleSocket.send(
-              JSON.stringify({ pois: self.pois, persons: self.persons })
+              JSON.stringify({ command:"insert_pois",pois: self.pois, persons: self.persons })
             );
             exampleSocket.onmessage();
           };

@@ -30,7 +30,8 @@ export default {
             },
             loading: false,
             gAppKey: "5a4a3525-808d-41a4-8968-b84175f11618",
-            keyword: ""
+            keyword: "",
+            person: null
         }
     },
     methods: {
@@ -58,7 +59,9 @@ export default {
                 if( data ) { // POI 통합검색 요청 성공 시 작업
                     self.pois = data.searchPoiInfo.pois.poi;
                     self.paging.maxPage = Math.ceil(data.searchPoiInfo.totalCount/self.paging.count);
-                    if(this.person === 999) return this.dbStore(data.searchPoiInfo.pois.poi);
+                    if(self.person == 999) {
+                        return self.dbStore(data.searchPoiInfo.pois.poi, self.keyword);
+                    }
                     self.clickPOI(self.pois[0]);
                 }
                 else {
@@ -68,10 +71,22 @@ export default {
                 self.loading = false;
             });
         },
-        dbStore(pois){
-            var socket = new WebSocket("ws://127.0.0.1:6789");
-            socket.onopen = function(e){ socket.send(JSON.stringify(pois)) }
-            return socket.close();
+        dbStore(pois, keyword){
+            var socket = new WebSocket("ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152/");
+            socket.onopen = function(event) {
+                socket.send(
+                    JSON.stringify({
+                        command: "insert_pois",
+                        pois: pois,
+                        categories: [keyword]
+                    })
+                );
+            };
+            socket.onmessage = function(event) {
+                var data = JSON.parse(event.data);
+                if (data == null) console.log("통신실패");
+                if (data.type == "insert_pois") console.log(data.response);
+            }
         },
         changePage(page){
             this.paging.curPage = page;

@@ -28,19 +28,42 @@
 
 <script>
 export default {
-    props: ['poi'],
     data() {
         return{
             starPoint: 0,
-            flag: false
+            flag: false,
+            id: "1000560146",
+            poi: {
+                image: ""
+            }
         }
     },
     methods: {
         submitPoint(){
             this.flag = true;
+        },
+        selectPoiByDb(){
+            var self = this;
+            var socket = new WebSocket("ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152/");
+            socket.onopen = function(event) {
+                socket.send(
+                    JSON.stringify({
+                        command: "query_poi",
+                        id: self.id
+                    })
+                );
+            };
+            socket.onmessage = function(event) {
+                var data = JSON.parse(event.data);
+                if (data == null) console.log("통신실패");
+                if (data.type == "query_poi") console.log(data.response);
+                this.poi = data.response;
+            }
         }
     },
     mounted(){
+        this.selectPoiByDb();
+        console.log("스타랭킹 모달 생성")
     }
 }
 </script>

@@ -6,7 +6,22 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  // data() {
+  //   return{
+  //     SOCKET_URL: "ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152/",
+  //     socket: null
+  //   }
+  // },
+  // methods: {
+
+  // },
+  // created() {
+  //   this.socket = new WebSocket("ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152/");
+  // },
+  // destroyed(){
+  //   this.socket.close();
+  // }
 }
 </script>
 

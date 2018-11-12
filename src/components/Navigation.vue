@@ -52,7 +52,8 @@
 </template>
 
 <script>
-import recommandPois from "../tmp/recommandPois"
+import Socket from '../socket';
+// import recommandPois from "../tmp/recommandPois"
 import Btn from "./Btn";
 
 export default {
@@ -72,7 +73,7 @@ export default {
                 }
             ],
             paramPois: [],
-            recommandPois: recommandPois,
+            recommandPois: [],
             menuFlag: false,
             categories: [],
             dbStoreKeyword: ""
@@ -86,15 +87,31 @@ export default {
         },
         clickRecommand(){
             this.pois.forEach(poi => {
-                if(poi.name === null) return alert("않이! 사람을 추가했으면 장소를 채우셔야죠");
+                if(poi.name === null) return alert("않이! 사람을 추가했으면 장소를 채우셔야죠, 답답한 양반아...");
             });
             this.recommand();
             this.menuFlag = false;
         },
         recommand(){
+            var lonLats = [];
+            this.paramPois.forEach(poi => {
+                var lonLat = {lon: poi.lon, lat: poi.lat};
+                lonLats.push(lonLat);
+            });
+            console.log(lonLats)
             // this.param.pois를 통해 recommandPois를 얻을 것
-            this.eventBus.$emit('showRecommandComponent', this.recommandPois);
-            this.eventBus.$emit('setPoisMarker', this.recommandPois);
+            var param = {
+                command: "query_square_bound",
+                people_chosen: lonLats
+            };
+            Socket
+            .send(param)
+            .then(res => { 
+                this.recommandPois = res 
+                this.eventBus.$emit('showRecommandComponent', this.recommandPois);
+                this.eventBus.$emit('setPoisMarker', this.recommandPois);
+            })
+            .catch(err => { console.log(err) })
         },
         onEnter(index) {
             if(index === 999) return this.eventBus.$emit('inputKeyword', this.dbStoreKeyword, index);

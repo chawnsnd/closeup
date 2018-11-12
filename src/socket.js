@@ -14,12 +14,14 @@ export default{
                         if(data.response.length == 0) reject("no search poi");
                         return resolve(data.response[0]);
                     }
+                    if (data.type == "query_pois" || data.type == "query_square_bound"){
+                        if(data.response.length == 0) reject("no search poi");
+                        return resolve(data.response);
+                    }
                     return resolve(data.response);
                 };
             } catch (error) {
                 reject(error);
-            } finally {
-                Socket.close();
             }
         })
     }

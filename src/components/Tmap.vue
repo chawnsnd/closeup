@@ -38,7 +38,7 @@ export default {
         },
         makeMarker(poi, str) {
             var self = this;
-            var lonlat = new Tmap.LonLat(poi.frontLon, poi.frontLat);
+            var lonlat = new Tmap.LonLat(poi.lon, poi.lat);
             var label = new Tmap.Label(poi.name);
             var size = new Tmap.Size(24, 38);//아이콘 크기 설정
 	    	var offset = new Tmap.Pixel(-(size.w / 2), -(size.h));//아이콘 중심점 설정
@@ -88,7 +88,7 @@ export default {
             var marker = this.makeMarker(poi, String(person+1));
             this.personMarkers[person] = marker;
             this.markerLayer.addMarker(this.personMarkers[person]);
-            this.setCenter(poi.frontLon, poi.frontLat);
+            this.setCenter(poi.lon, poi.lat);
         },
         setPoisMarker(pois){
             this.poisMarkers.forEach(poisMarker => { this.markerLayer.removeMarker(poisMarker) });

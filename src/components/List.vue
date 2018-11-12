@@ -16,6 +16,7 @@
 
 <script>
 import Pagination from './Pagination';
+import Socket from '../socket';
 export default {
     components: {
         "pagination": Pagination
@@ -71,22 +72,48 @@ export default {
                 self.loading = false;
             });
         },
+        preProcess(pois){
+            var sendPois = [];
+            pois.forEach(poi => {
+                var sendPoi = {};
+                sendPoi.id = poi.id;
+                sendPoi.name = poi.name;
+                sendPoi.telNo = poi.telNo;
+                sendPoi.name = poi.name;
+                sendPoi.lat = Number(poi.frontLat);
+                sendPoi.lon = Number(poi.frontLon);
+                sendPoi.upperAddrName = poi.upperAddrName;
+                sendPoi.middleAddrName = poi.middleAddrName;
+                sendPoi.lowerAddrName = poi.lowerAddrName;
+                sendPoi.detailAddrName = poi.detailAddrName;
+                sendPoi.roadName = poi.roadName;
+                sendPoi.firstBuildNo = poi.firstBuildNo;
+                sendPoi.firstNo = poi.firstNo,
+                sendPoi.secondNo = poi.secondNo,
+                sendPoi.bizName = poi.bizName,
+                sendPoi.upperBizName = poi.upperBizName,
+                sendPoi.middleBizName = poi.middleBizName,
+                sendPoi.lowerBizName = poi.lowerBizName,
+                sendPoi.detailBizName = poi.detailBizName,
+                sendPoi.desc = poi.desc,
+                sendPoi.starPoint = 0;
+                sendPoi.starCount = 0;
+                sendPoi.image = "https://jandi-box.com/files-thumb/16521606/154200545121618a92ad584b5e1bffc310c32b28aede8?size=640";
+                sendPois.push(sendPoi);
+            })
+            return sendPois;
+        },
         dbStore(pois, keyword){
-            var socket = new WebSocket("ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152/");
-            socket.onopen = function(event) {
-                socket.send(
-                    JSON.stringify({
-                        command: "insert_pois",
-                        pois: pois,
-                        categories: [keyword]
-                    })
-                );
+            var sendPois = this.preProcess(pois);
+            var param = {
+                command: "insert_pois",
+                pois: sendPois,
+                categories: [keyword],
             };
-            socket.onmessage = function(event) {
-                var data = JSON.parse(event.data);
-                if (data == null) console.log("통신실패");
-                if (data.type == "insert_pois") console.log(data.response);
-            }
+            Socket
+            .send(param)
+            .then(res => { console.log(res) })
+            .catch(err => { console.log(err) })
         },
         changePage(page){
             this.paging.curPage = page;

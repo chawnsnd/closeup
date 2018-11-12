@@ -27,12 +27,14 @@
 </template>
 
 <script>
+import Socket from '../socket';
+
 export default {
     data() {
         return{
             starPoint: 0,
             flag: false,
-            id: "1000560146",
+            id: "1161695",
             poi: {
                 image: ""
             }
@@ -41,29 +43,31 @@ export default {
     methods: {
         submitPoint(){
             this.flag = true;
+            var self = this;
+            var param = {
+                command: "update_star",
+                id: self.poi.id,
+                starPoint: self.starPoint
+            };
+            Socket
+            .send(param)
+            .then(res => { console.log(res) })
+            .catch(err => { console.log(err) })
         },
         selectPoiByDb(){
             var self = this;
-            var socket = new WebSocket("ws://ec2-13-59-71-223.us-east-2.compute.amazonaws.com:49152/");
-            socket.onopen = function(event) {
-                socket.send(
-                    JSON.stringify({
-                        command: "query_poi",
-                        id: self.id
-                    })
-                );
+            var param = {
+                command: "query_poi",
+                id: self.id
             };
-            socket.onmessage = function(event) {
-                var data = JSON.parse(event.data);
-                if (data == null) console.log("통신실패");
-                if (data.type == "query_poi") console.log(data.response);
-                this.poi = data.response;
-            }
+            Socket
+            .send(param)
+            .then(res => { self.poi = res })
+            .catch(err => { console.log(err) })
         }
     },
     mounted(){
         this.selectPoiByDb();
-        console.log("스타랭킹 모달 생성")
     }
 }
 </script>

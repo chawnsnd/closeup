@@ -9,7 +9,6 @@ export default{
                 Socket.send(
                     JSON.stringify(param)
                     );
-                console.log(param)
                 Socket.onmessage = function(event) {
                     var data = JSON.parse(event.data);
                     if (data == null) return reject("통신실패");
@@ -17,7 +16,11 @@ export default{
                         if(data.response.length == 0) return reject("no search poi");
                         return resolve(data.response[0]);
                     }
-                    if (data.type == "query_pois" || data.type == "recommend_api"){
+                    if (data.type == "query_pois"){
+                        if(data.response.totalCount == 0) return reject("no search poi");
+                        return resolve(data.response);
+                    }
+                    if ( data.type == "recommend_api"){
                         if(data.response.length == 0) return reject("no search poi");
                         return resolve(data.response);
                     }

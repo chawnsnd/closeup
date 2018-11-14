@@ -48,15 +48,17 @@ export default {
             var param = {
                 command: "query_pois",
                 keyWord: this.keyword,
+                count: this.paging.count,
+                page: this.paging.curPage,
                 collection: "TestPoisCollection"
             };
             Socket
             .send(param)
-            .then(res => { 
-                self.pois = res;
-                self.paging.totalCount = res.length
-                self.paging.maxPage = Math.ceil(res.length/self.paging.count);
-                self.clickPOI(res[0]);
+            .then(res => {
+                self.pois = res.pois;
+                self.paging.totalCount = res.totalCount
+                self.paging.maxPage = Math.ceil(res.totalCount/self.paging.count);
+                self.clickPOI(self.pois[0]);
             })
             .catch(err => { console.log(err) })
         },
@@ -133,7 +135,7 @@ export default {
         },
         changePage(page){
             this.paging.curPage = page;
-            // this.getTotPOISearch(this.keyword, this.person);
+            this.getPoiFromDb();
         },
         clickPOI(poi){
             this.eventBus.$emit('setPersonMarker', poi, this.person)

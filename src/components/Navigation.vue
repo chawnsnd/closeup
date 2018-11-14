@@ -223,14 +223,14 @@ export default {
         recommand(){
             var lonLats = [];
             this.paramPois.forEach(poi => {
-                var lonLat = {lon: poi.lon, lat: poi.lat};
+                var lonLat = {lon: Number(poi.frontLon), lat: Number(poi.frontLat)};
                 lonLats.push(lonLat);
             });
             // this.param.pois를 통해 recommandPois를 얻을 것
             var param = {
                 command: "recommend_api",
                 people_chosen: lonLats,
-                keyWord: this.category == null ? "전체" : this.category
+                keyWord: this.category == null ? "죽전" : this.category
             };
             Socket
             .send(param)

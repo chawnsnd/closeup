@@ -5,6 +5,7 @@
           <list/>
         </div>
         <dbinsert />
+        <searching v-if="showSearchingComponent" />
         <recommand v-if="showRecommandComponent" v-bind:pois = recommandPois />
         <tmap class="absolute" />
         <starpoint v-if="showStarPointModal" v-bind:poi = starPointPoi @close="showStarPointModal=false" class="modal"/>
@@ -16,6 +17,7 @@ import SearchBar from "./SearchBar";
 import Tmap from "./Tmap";
 import List from "./List";
 import DbInsert from "./DbInsert";
+import Searching from "./Searching";
 import Navigation from "./Navigation";
 import Recommand from "./Recommand";
 import StarPoint from "./StarPoint";
@@ -30,6 +32,7 @@ export default {
       showStarPointModal: false,
       starPointPoi: null,
       showRecommandComponent: false,
+      showSearchingComponent: false,
       recommandPois: []
     };
   },
@@ -40,7 +43,8 @@ export default {
     "navigation": Navigation,
     "recommand": Recommand,
     "starpoint": StarPoint,
-    "dbinsert": DbInsert
+    "dbinsert": DbInsert,
+    "searching": Searching
   },
   methods: {
     showRecommand(pois){
@@ -50,12 +54,16 @@ export default {
     showStarPoint(poi){
       this.showStarPointModal = true;
       this.starPointPoi = poi
+    },
+    toggleSearching(){
+      this.showSearchingComponent = !this.showSearchingComponent
     }
   },
   mounted() {
     this.eventBus.$on("recommandFlag", this.recommandFlag);
     this.eventBus.$on('showStarPoint', this.showStarPoint);
     this.eventBus.$on('showRecommandComponent', this.showRecommand);
+    this.eventBus.$on('toggleSearching', this.toggleSearching);
   }
 };
 </script>
@@ -79,6 +87,12 @@ export default {
   }
   .dbinsert{
     position: absolute;
+    left: 50%;
+    transform: translateX(-50%)
+  }
+  .searching{
+    position: absolute;
+    top: 60px;
     left: 50%;
     transform: translateX(-50%)
   }

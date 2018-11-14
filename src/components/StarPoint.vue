@@ -30,13 +30,13 @@
 import Socket from '../socket';
 
 export default {
+    props: ['poi'],
     data() {
         return{
             starPoint: 0,
             flag: false,
-            id: "1161695",
             poi: {
-                image: ""
+                image: ''
             }
         }
     },
@@ -54,20 +54,19 @@ export default {
             .then(res => { console.log(res) })
             .catch(err => { console.log(err) })
         },
-        selectPoiByDb(){
-            var self = this;
-            var param = {
-                command: "query_poi",
-                id: self.id
-            };
-            Socket
-            .send(param)
-            .then(res => { self.poi = res })
-            .catch(err => { console.log(err) })
-        }
+        // selectPoiByDb(){
+        //     var self = this;
+        //     var param = {
+        //         command: "query_poi",
+        //         id: self.id
+        //     };
+        //     Socket
+        //     .send(param)
+        //     .then(res => { self.poi = res })
+        //     .catch(err => { console.log(err) })
+        // }
     },
     mounted(){
-        this.selectPoiByDb();
     }
 }
 </script>

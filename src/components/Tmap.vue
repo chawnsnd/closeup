@@ -57,7 +57,6 @@ export default {
                         self.map.removePopup(popup);
                     }
                 })
-                console.log(self.map.popups)
             });
             return marker;
         },

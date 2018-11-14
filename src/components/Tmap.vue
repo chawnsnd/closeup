@@ -19,6 +19,7 @@ export default {
             tData: null,
             personMarkers: [],
             poisMarkers: [],
+            popups: [],
             showPopup: false,
             recommandPois: []
         }
@@ -39,50 +40,53 @@ export default {
         makeMarker(poi, size, iconURL) {
             var self = this;
             var lonlat = new Tmap.LonLat(poi.lon, poi.lat);
-            var label = new Tmap.Label(poi.name);
+            var label = new Tmap.Label(poi.id);
             var size = new Tmap.Size(24, 38);//아이콘 크기 설정
 	    	var offset = new Tmap.Pixel(-(size.w / 2), -(size.h));//아이콘 중심점 설정
             // var icon = new Tmap.Icon('http://tmapapis.sktelecom.com/upload/tmap/marker/pin_b_m_'+str+'.png',size, offset);//마커 아이콘 설정
             var icon = new Tmap.Icon(iconURL, size, offset);//마커 아이콘 설정
-            var marker = new Tmap.Marker(lonlat, icon, label);//마커 생성
-            //마커에 poi정보를 나타낼 수 있는 팝업 등록
-            var content =
-`<div style=' position: relative; border-bottom: 1px solid #dcdcdc; line-height: 18px; padding: 0 35px 2px 0;'>
-    <div style='font-size: 12px; line-height: 15px;'>
-        <span style='display: inline-block; width: 14px; height: 14px; background-image: url(/resources/images/common/icon_blet.png); vertical-align: middle; margin-right: 5px;'></span>${poi.name}
-    </div>
-</div>
-<div style='position: relative; padding-top: 5px; display:inline-block'>
-    <div style='display:inline-block; border:1px solid #dcdcdc;'><img src=${poi.image} width='73' height='70'></div>
-    <div style='display:inline-block; margin-left:5px; vertical-align: top;'>
-        <span style='font-size: 12px; margin-left:2px; margin-bottom:2px; display:block;'>${poi.upperAddrName} ${poi.middleAddrName} ${poi.lowerAddrName} ${poi.detailAddrName}</span>
-        <span style='font-size: 12px; color:#888; margin-left:2px; margin-bottom:2px; display:block;'>(도로명)${poi.roadName} ${poi.buildingNo1} ${poi.buildingNo2}</span>
-        <span style='font-size: 12px; color:gold; margin-left:2px; display:block;'><i class="fas fa-star"></i> ${poi.starPoint}</span>
-        <span class="evaluate" @click="starPoint(poi)">평가하기</span>
-        <span style='font-size: 12px; margin-left:2px;'><a href='https://www.google.co.kr/search?q=${poi.name}' target='blank'>구글검색</a></span>
-    </div>
-</div>`;
-            var popup = new Tmap.Popup("popup"+poi.id,
-                lonlat,//Popup 이 표출될 맵 좌표
+            var marker = new Tmap.Markers(lonlat, icon, label);//마커 생성
+            var popup = this.makePopup(poi);
+            this.popups.push(popup);
+            // console.log(popup)
+            marker.events.register("click", marker, function(e){
+                self.popups.forEach(popup => {
+                    if(marker.labelHtml === popup.id) {
+                        self.map.addPopup(popup);
+                    }else{
+                        self.map.removePopup(popup);
+                    }
+                })
+                console.log(self.map.popups)
+            });
+            return marker;
+        },
+        makePopup(poi){
+            var content = 
+                `<div style=' position: relative; border-bottom: 1px solid #dcdcdc; line-height: 18px; padding: 0 35px 2px 0;'>
+                    <div style='font-size: 12px; line-height: 15px;'>
+                        <span style='display: inline-block; width: 14px; height: 14px; font-weight: bold; background-image: url(/resources/images/common/icon_blet.png); vertical-align: middle; margin-right: 5px;'>${poi.name}</span>
+                    </div>
+                </div>
+                <div style='position: relative; padding-top: 5px; display:inline-block'>
+                    <div style='display:inline-block; border:1px solid #dcdcdc;'><img src=${poi.image} width='73' height='70'></div>
+                    <div style='display:inline-block; margin-left:5px; vertical-align: top; border-bottom: 1px solid #dcdcdc;'>
+                        <span style='font-size: 12px; margin-left:2px; margin-bottom:2px; display:block;'>${poi.upperAddrName} ${poi.middleAddrName} ${poi.roadName} ${poi.firstBuildNo}</span>
+                        <span style='font-size: 12px; color:#888; margin-left:2px; margin-bottom:2px; display:block;'>(지번)${poi.upperAddrName} ${poi.middleAddrName} ${poi.lowerAddrName} ${poi.detailAddrName} ${poi.firstNo} ${poi.secondNo}</span>
+                        <span style='font-size: 12px; color:gold; margin-left:2px; display:block;'><i class="fas fa-star"></i> ${poi.starPoint}</span>
+                    </div>
+                    <div style='display:inline-block; margin-left:5px; vertical-align: top;>
+                        ${poi.desc}
+                    </div>
+                </div>`;
+            var popup = new Tmap.Popup(poi.id,
+                new Tmap.LonLat(poi.lon, poi.lat),//Popup 이 표출될 맵 좌표
                 new Tmap.Size(180, 50),//Popup 크기
-                content,//Popup 표시될 text
-                function(){ 
-                    select.unselectAll();
-                    self.showPopup = !self.showPopup;
-                }//close클릭시 실행할 콜백 함수
+                content
             );
             popup.setBorder("1px solid #8d8d8d");//popup border 조절
             popup.autoSize=true;//popup 사이즈 자동 조절
-            marker.events.register("click", popup, function(e){
-                self.map.removeAllPopup();
-                if(!self.showPopup){
-                    self.map.addPopup(this);	// Map에 팝업 객체를 등록합니다.
-                }else{
-                    self.map.removePopup(this);	// Map에 팝업 객체를 제거합니다.
-                }
-                self.showPopup = !self.showPopup;
-            });
-            return marker;
+            return popup
         },
         setPersonMarker(poi, person){
             if(this.personMarkers[person] != null) this.markerLayer.removeMarker(this.personMarkers[person]);
@@ -114,11 +118,14 @@ export default {
         },
         clickRecommandPoi(poi){
             this.poisMarkers.forEach(poisMarker => {
-                if(poisMarker.lonlat == new Tmap.LonLat(poi.lon, poi.lat)){
-                    this.markerLayer.removeMarker(poisMarker);
-                    poisMarker = this.makeMarker(poi, new Tmap.Size(19, 12), 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/pin_red.png');
-                    this.marekrLayer.addMarker(poisMarker);
+                this.markerLayer.removeMarker(poisMarker);
+                if(poisMarker.labelHtml == poi.id){
+                    poisMarker.icon.url = 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/pin_red.png';
+                    poisMarker.events.triggerEvent("click");
+                }else{
+                    poisMarker.icon.url = 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/pin_green.png';
                 }
+                this.markerLayer.addMarker(poisMarker);
             })
             this.setCenter(poi.lon, poi.lat);
         }

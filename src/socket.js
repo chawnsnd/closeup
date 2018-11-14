@@ -8,9 +8,11 @@ export default{
             try {
                 Socket.send(
                     JSON.stringify(param)
-                    );
+                );
+                console.log("보낸거", param)
                 Socket.onmessage = function(event) {
                     var data = JSON.parse(event.data);
+                    console.log("받은거", data)
                     if (data == null) return reject("통신실패");
                     if (data.type == "query_poi") {
                         if(data.response.length == 0) return reject("no search poi");

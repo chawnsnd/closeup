@@ -1,7 +1,7 @@
 <template>
     <div v-if="pois != null" class="list">
         <div class="pois" :class="{'disable': loading}">
-            <div class="count">{{(paging.curPage-1)*10+1}} ~ {{(paging.curPage)*10}} / {{pois.totalCount}}</div>
+            <div class="count">{{(paging.curPage-1)*10+1}} ~ {{(paging.curPage)*10}} / {{paging.totalCount}}</div>
             <div class="poi" v-for="(poi, index) in pois" :key="index">
                 <div class="left" @click="clickPOI(poi)">
                     <div class="poiname">{{poi.name}}</div>
@@ -27,7 +27,8 @@ export default {
             paging: {
                 count: 10,
                 curPage: 1,
-                maxPage: 0
+                maxPage: 0,
+                totalCount: 0
             },
             loading: false,
             gAppKey: "5a4a3525-808d-41a4-8968-b84175f11618",
@@ -53,6 +54,8 @@ export default {
             .send(param)
             .then(res => { 
                 self.pois = res;
+                self.paging.totalCount = res.length
+                self.paging.maxPage = Math.ceil(res.length/self.paging.count);
                 self.clickPOI(res[0]);
             })
             .catch(err => { console.log(err) })
@@ -130,7 +133,7 @@ export default {
         },
         changePage(page){
             this.paging.curPage = page;
-            this.getTotPOISearch(this.keyword, this.person);
+            // this.getTotPOISearch(this.keyword, this.person);
         },
         clickPOI(poi){
             this.eventBus.$emit('setPersonMarker', poi, this.person)

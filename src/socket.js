@@ -1,4 +1,4 @@
-var Socket = new WebSocket("ws://192.168.0.19:49152/");
+var Socket = new WebSocket("ws://172.31.43.31:49152/");
 
 export default{
     send(param){
@@ -14,7 +14,7 @@ export default{
                         if(data.response.length == 0) reject("no search poi");
                         return resolve(data.response[0]);
                     }
-                    if (data.type == "query_pois" || data.type == "query_square_bound"){
+                    if (data.type == "query_pois" || data.type == "recommend_api"){
                         if(data.response.length == 0) reject("no search poi");
                         return resolve(data.response);
                     }

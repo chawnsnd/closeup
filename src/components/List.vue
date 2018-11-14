@@ -40,8 +40,8 @@ export default {
             if(keyword == '') return alert('검색어를 입력해 주세요');
             this.keyword = keyword;
             this.person = index;
-            // this.getTotPOISearch() //디비저장시 이거 사용할 것
-            this.getPoiFromDb(); //실제 시연시 이거사용
+            this.getTotPOISearch() //디비저장시 이거 사용할 것
+            // this.getPoiFromDb(); //실제 시연시 이거사용
         },
         getPoiFromDb(){
             var self = this;

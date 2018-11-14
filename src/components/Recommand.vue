@@ -36,7 +36,7 @@ export default {
             window.open(`https://www.google.co.kr/search?q=${keyword}`);
         },
         clickPoi(poi){
-            this.eventBus.$emit('setCenter', poi.frontLon, poi.frontLat);
+            this.eventBus.$emit('clickRecommandPoi', poi);
         },
         starPoint(poi){
             this.eventBus.$emit('showStarPoint', poi);

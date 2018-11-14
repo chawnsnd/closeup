@@ -138,11 +138,23 @@ export default {
         clickPOI(poi){
             this.eventBus.$emit('setPersonMarker', poi, this.person)
             this.eventBus.$emit('setPerson', poi, this.person)
+        },
+        removePois(){
+            this.pois = null;
+            this. paging = {
+                count: 10,
+                curPage: 1,
+                maxPage: 0
+            };
+            this.loading = false;
+            this.keyword = "",
+            this.person = null
         }
     },
     mounted() {
         this.eventBus.$on("inputKeyword", this.inputKeyword);
         this.eventBus.$on("changePage", this.changePage);
+        this.eventBus.$on('removePois', this.removePois);
     },
     computed: {
         pages() {

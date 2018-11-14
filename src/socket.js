@@ -1,4 +1,5 @@
-var Socket = new WebSocket("ws://172.31.43.31:49152/");
+// var Socket = new WebSocket("ws://172.31.43.31:49152/");
+var Socket = new WebSocket("ws://localhost:49152/");
 
 export default{
     send(param){

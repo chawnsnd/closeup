@@ -5,7 +5,7 @@
 
 <script>
 import MarkerPopup from "./MarkerPopup";
-import recommandPois from "../tmp/recommandPois"
+// import recommandPois from "../tmp/recommandPois"
 
 export default {
     components: {
@@ -20,7 +20,7 @@ export default {
             personMarkers: [],
             poisMarkers: [],
             showPopup: false,
-            recommandPois: recommandPois,
+            recommandPois: []
         }
     },
     methods: {
@@ -114,7 +114,7 @@ export default {
         },
         clickRecommandPoi(poi){
             this.poisMarkers.forEach(poisMarker => {
-                if(poisMarker.lonlat == new Tmpa.LonLat(poi.lon, poi.lat)){
+                if(poisMarker.lonlat == new Tmap.LonLat(poi.lon, poi.lat)){
                     this.markerLayer.removeMarker(poisMarker);
                     poisMarker = this.makeMarker(poi, new Tmap.Size(19, 12), 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/pin_red.png');
                     this.marekrLayer.addMarker(poisMarker);

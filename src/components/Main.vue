@@ -4,6 +4,7 @@
           <navigation/>
           <list/>
         </div>
+        <dbinsert />
         <recommand v-if="showRecommandComponent" v-bind:pois = recommandPois />
         <tmap class="absolute" />
         <starpoint v-if="showStarPointModal" v-bind:poi = starPointPoi @close="showStarPointModal=false" class="modal"/>
@@ -14,6 +15,7 @@
 import SearchBar from "./SearchBar";
 import Tmap from "./Tmap";
 import List from "./List";
+import DbInsert from "./DbInsert";
 import Navigation from "./Navigation";
 import Recommand from "./Recommand";
 import StarPoint from "./StarPoint";
@@ -37,7 +39,8 @@ export default {
     "list": List,
     "navigation": Navigation,
     "recommand": Recommand,
-    "starpoint": StarPoint
+    "starpoint": StarPoint,
+    "dbinsert": DbInsert
   },
   methods: {
     showRecommand(pois){
@@ -73,6 +76,11 @@ export default {
   .recommand{
     float: right;
     margin: 10px 10px 0 0;
+  }
+  .dbinsert{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%)
   }
 }
 </style>

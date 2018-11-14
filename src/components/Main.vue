@@ -55,15 +55,15 @@ export default {
       this.showStarPointModal = true;
       this.starPointPoi = poi
     },
-    toggleSearching(){
-      this.showSearchingComponent = !this.showSearchingComponent
+    showSearching(bool){
+      this.showSearchingComponent = bool
     }
   },
   mounted() {
     this.eventBus.$on("recommandFlag", this.recommandFlag);
     this.eventBus.$on('showStarPoint', this.showStarPoint);
     this.eventBus.$on('showRecommandComponent', this.showRecommand);
-    this.eventBus.$on('toggleSearching', this.toggleSearching);
+    this.eventBus.$on('showSearching', this.showSearching);
   }
 };
 </script>

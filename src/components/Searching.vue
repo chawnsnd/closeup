@@ -12,7 +12,7 @@ export default {
 
 <style>
 .searching{
-    width: 800px;
+    width: 700px;
     font-size: 50px;
     padding: 15px 0;
     font-weight: bold;

@@ -40,8 +40,7 @@ export default {
             if(keyword == '') return alert('검색어를 입력해 주세요');
             this.keyword = keyword;
             this.person = index;
-            this.getTotPOISearch() //디비저장시 이거 사용할 것
-            // this.getPoiFromDb(); //실제 시연시 이거사용
+            this.getPoiFromDb(); //실제 시연시 이거사용
         },
         getPoiFromDb(){
             var self = this;
@@ -54,11 +53,12 @@ export default {
             .send(param)
             .then(res => { 
                 self.pois = res;
-                self.clickPOI(self.res[0]);
+                self.clickPOI(res[0]);
             })
             .catch(err => { console.log(err) })
         },
-        getTotPOISearch() {
+        getTotPOISearch(keyword) {
+            this.keyword = keyword
             var self = this;
 	  	    var url = "https://api2.sktelecom.com/tmap/pois";//POI 검색 api url 입니다
             var params = {
@@ -76,10 +76,7 @@ export default {
                 if( data ) { // POI 통합검색 요청 성공 시 작업
                     self.pois = data.searchPoiInfo.pois.poi;
                     self.paging.maxPage = Math.ceil(data.searchPoiInfo.totalCount/self.paging.count);
-                    if(self.person == 999) {
-                        return self.dbStore(data.searchPoiInfo.pois.poi, self.keyword);
-                    }
-                    self.clickPOI(self.pois[0]);
+                    return self.dbStore(data.searchPoiInfo.pois.poi, self.keyword);
                 }
                 else {
                     console.log("검색결과가 없습니다");
@@ -155,6 +152,7 @@ export default {
         this.eventBus.$on("inputKeyword", this.inputKeyword);
         this.eventBus.$on("changePage", this.changePage);
         this.eventBus.$on('removePois', this.removePois);
+        this.eventBus.$on('getTotPOISearch', this.getTotPOISearch);
     },
     computed: {
         pages() {

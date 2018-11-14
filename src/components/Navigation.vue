@@ -140,7 +140,7 @@ export default {
             paramPois: [],
             recommandPois: [],
             showFilter: false,
-            category: null
+            category: ""
         }
     },
     methods:{
@@ -149,7 +149,7 @@ export default {
             this.eventBus.$emit('removePois');
         },
         setPerson(poi, index){
-            this.paramPois.push(poi);
+            this.paramPois[index] = poi;
             this.pois[index].name = poi.name;
             this.pois[index].keyword = poi.name;
         },
@@ -166,7 +166,7 @@ export default {
             this.recommand();
         },
         recommand(){
-            this.eventBus.$emit('toggleSearching');
+            this.eventBus.$emit('showSearching', true);
             var lonLats = [];
             this.paramPois.forEach(poi => {
                 var lonLat = {lon: poi.lon, lat: poi.lat};
@@ -184,7 +184,7 @@ export default {
                 this.recommandPois = res 
                 this.eventBus.$emit('showRecommandComponent', this.recommandPois);
                 this.eventBus.$emit('setPoisMarker', this.recommandPois);
-                this.eventBus.$emit('toggleSearching');
+                this.eventBus.$emit('showSearching', false);
             })
             .catch(err => { console.log(err) })
         },

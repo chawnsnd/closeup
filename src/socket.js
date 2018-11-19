@@ -1,6 +1,6 @@
 // var Socket = new WebSocket("ws://172.31.43.31:49152/");
-var Socket = new WebSocket("ws://localhost:49152/");
-// var Socket = new WebSocket("ws://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:49152/");
+// var Socket = new WebSocket("ws://localhost:49152/");
+var Socket = new WebSocket("ws://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:49152/");
 
 export default{
     send(param){

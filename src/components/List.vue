@@ -63,6 +63,7 @@ export default {
             .catch(err => { console.log(err) })
         },
         getTotPOISearch(keyword) {
+            this.dbInserting = true
             this.keyword = keyword
             var self = this;
 	  	    var url = "https://api2.sktelecom.com/tmap/pois";//POI 검색 api url 입니다
@@ -135,6 +136,7 @@ export default {
         },
         changePage(page){
             this.paging.curPage = page;
+            if(this.dbInserting) return this.getTotPOISearch();
             this.getPoiFromDb();
         },
         clickPOI(poi){

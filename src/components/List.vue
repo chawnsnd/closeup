@@ -33,12 +33,19 @@ export default {
             loading: false,
             gAppKey: "5a4a3525-808d-41a4-8968-b84175f11618",
             keyword: "",
-            person: null
+            person: null,
+            dbInserting: false
         }
     },
     methods: {
         inputKeyword(keyword, index){
             if(keyword == '') return alert('검색어를 입력해 주세요');
+            this.paging = {
+                count: 10,
+                curPage: 1,
+                maxPage: 0,
+                totalCount: 0
+            }
             this.keyword = keyword;
             this.person = index;
             this.getPoiFromDb(); //실제 시연시 이거사용
@@ -70,12 +77,14 @@ export default {
             var params = {
                     "version" : "1"//버전
                     ,"page" : this.paging.curPage//페이지
-                    ,"count"  : this.paging.count//페이지당 검색수
+                    ,"count"  : 200//페이지당 검색수
                     ,"searchKeyword" : this.keyword //검색어
                     ,"searchtypCd" : "A"//R: 거리순 / A:정확도순
                     ,"appKey"  : this.gAppKey //앱키
                     ,"reqCoordType" : "EPSG3857"
                     ,"resCoordType" : "EPSG3857"
+                    // ,"ceterLon" : 
+                    // ,"centerLat" : 
             };
             this.loading = true;
 	  	    $.get( url, params, function(data){
@@ -136,7 +145,7 @@ export default {
         },
         changePage(page){
             this.paging.curPage = page;
-            if(this.dbInserting) return this.getTotPOISearch();
+            if(this.dbInserting) return this.getTotPOISearch(this.keyword);
             this.getPoiFromDb();
         },
         clickPOI(poi){

@@ -1,13 +1,13 @@
 <template>
     <div class="recommand" v-if="pois!=null">
         <div class="title"> <span>CloseUp</span>이 추천하는 BEST 장소</div>
-        <div class="r_poi" v-for="(poi, index) in pois" :key="index" @click="clickPoi(poi)">
+        <div class="r_poi" v-for="(poi, index) in paginatedData" :key="index" @click="clickPoi(poi)">
             <div class="img"><img :src="poi.image" width="100px" height="100px"/></div>
             <div class="info">
                 <div class="first line">
-                    <span class="name">{{index+1}}. {{poi.name}}</span>
+                    <span class="name">{{poi.rank}}등 {{poi.name}}</span>
                 </div>
-                <div class="score"><span>{{poi.score}}</span>점</div>
+                <div class="score"><span>{{poi.weight}}</span>점</div>
                 <div class="second line">
                     <div class="address">{{poi.upperAddrName}} {{poi.middleAddrName}} {{poi.lowerAddrName}} {{poi.detailAddrName}}</div>
                     <div class="tel">TEL: {{poi.telNo}}</div>
@@ -22,6 +22,10 @@
                 </div>
             </div>
         </div>
+        <div class="pagination">
+            <span @click="prevPage()">이전</span>
+            <span @click="nextPage()">다음</span>
+        </div>
     </div>
 </template>
 <script>
@@ -29,9 +33,18 @@ export default {
     props: ['pois'],
     data(){
         return {
+            pageNumber: 0,
+            size: 5
         }
     },
     methods: {
+        prevPage(){
+            if(this.pageNumber == 0) return
+            this.pageNumber--;
+        },
+        nextPage(){
+            this.pageNumber++
+        },
         googleSearch(keyword){
             window.open(`https://www.google.co.kr/search?q=${keyword}`);
         },
@@ -40,6 +53,18 @@ export default {
         },
         starPoint(poi){
             this.eventBus.$emit('showStarPoint', poi);
+        }
+    },
+    computed: {
+        pageCount(){
+            let l = this.pois.length;
+            let s = this.size;
+            return Math.floor(l/s);
+        },
+        paginatedData(){
+            const start = this.pageNumber * this.size;
+            const end = start + this.size;
+            return this.pois.slice(start, end);
         }
     }
 }
@@ -121,6 +146,19 @@ export default {
     font-size: 12px;
     &:hover{
         text-decoration: underline;
+    }
+}
+.pagination{
+    display: flex;
+    span{
+        flex: 1;
+        font-weight: bold;
+        font-size: 20px;
+        text-align: center;
+        cursor: pointer;
+        &:hover{
+            background-color: #eaeaea;
+        }
     }
 }
 </style>

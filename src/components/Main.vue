@@ -7,7 +7,7 @@
         <dbinsert />
         <searching v-if="showSearchingComponent" />
         <recommand v-if="showRecommandComponent" v-bind:pois = recommandPois />
-        <tmap class="absolute" />
+        <tmap class="absolute"/>
         <starpoint v-if="showStarPointModal" v-bind:poi = starPointPoi @close="showStarPointModal=false" class="modal"/>
     </div>
 </template>

@@ -181,12 +181,17 @@ export default {
             Socket
             .send(param)
             .then(res => { 
-                this.recommandPois = res 
+                this.recommandPois = res;
                 this.eventBus.$emit('showRecommandComponent', this.recommandPois);
                 this.eventBus.$emit('setPoisMarker', this.recommandPois);
+            })
+            .catch(err => { 
+                if(err === 'no search poi') this.recommandPois = [];
+                console.log(err) 
+            })
+            .finally(() => {
                 this.eventBus.$emit('showSearching', false);
             })
-            .catch(err => { console.log(err) })
         },
         onEnter(index) {
             this.eventBus.$emit('inputKeyword', this.pois[index].keyword, index);

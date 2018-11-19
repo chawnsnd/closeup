@@ -116,7 +116,7 @@ export default {
                 sendPoi.desc = poi.desc,
                 sendPoi.starPoint = 0;
                 sendPoi.starCount = 0;
-                sendPoi.image = "https://jandi-box.com/files-thumb/16521606/154200545121618a92ad584b5e1bffc310c32b28aede8?size=640";
+                sendPoi.image = "https://s3.ap-northeast-2.amazonaws.com/closeup-s3/resource/default-image.png";
                 sendPois.push(sendPoi);
             })
             return sendPois;

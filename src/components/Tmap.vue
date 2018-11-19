@@ -98,9 +98,20 @@ export default {
             this.poisMarkers.forEach(poisMarker => { this.markerLayer.removeMarker(poisMarker) });
             this.poisMarkers = [];
             pois.forEach(poi => {
-                var marker = this.makeMarker(poi, new Tmap.Size(19, 12), 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/pin_green.png');
+                // var marker = this.makeMarker(poi, new Tmap.Size(19, 12), 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/resource/pin_green.png');
+                // this.poisMarkers.push(marker);
+                // this.markerLayer.addMarker(marker);
+                var point = new Tmap.LonLat(poi.lon, poi.lat);
+                var marker = new Tmap.Cluster.Marker(point, {
+                    icon: "https://s3.ap-northeast-2.amazonaws.com/closeup-s3/resource/pin_green.png", // 마커 이미지 url
+                    width: 20, // 마커 사이즈
+                    data: poi.lon + "," + poi.lat, // 클릭 이벤트시에 사용할 데이터
+                    clickHandler: function (e) { // 클릭 이벤트 핸들러
+                        alert(e.data);
+                    }
+                });
                 this.poisMarkers.push(marker);
-                this.markerLayer.addMarker(marker);
+                // this.markerLayer.addMarker(marker);
             });
             var bounds = new Tmap.Bounds();
             this.poisMarkers.forEach(poisMarker => {
@@ -109,7 +120,19 @@ export default {
             this.personMarkers.forEach(personMarker => {
                 bounds.extend(personMarker.lonlat);
             })
+            this.cluster();
             this.map.zoomToExtent(bounds);
+        },
+        cluster(){
+            var icons = [];
+            icons.push(new Tmap.Cluster.Icon("http://topopentile1.tmap.co.kr/tmapicon/map/clusterbg1.png", { width: 20, fontColor: "#333333", fontSize: 15 }));
+            icons.push(new Tmap.Cluster.Icon("http://topopentile1.tmap.co.kr/tmapicon/map/clusterbg2.png", { width: 25, fontColor: "#333333", fontSize: 15 }));
+            icons.push(new Tmap.Cluster.Icon("http://topopentile1.tmap.co.kr/tmapicon/map/clusterbg3.png", { width: 30, fontColor: "#333333", fontSize: 15 }));
+
+            // 마커클러스터 등록
+            // gap : 값이 10이면 10개단위로 icon 변경
+            // distance : 클러스터링 할 픽셀 거리
+            var markerCluster = new Tmap.Cluster.Layer(this.map, { markers: this.poisMarkers, icon: icons, gap: 30, distance: 70 });
         },
         setCenter(lon, lat){
             var lonLat = new Tmap.LonLat(lon, lat);
@@ -119,10 +142,10 @@ export default {
             this.poisMarkers.forEach(poisMarker => {
                 this.markerLayer.removeMarker(poisMarker);
                 if(poisMarker.labelHtml == poi.id){
-                    poisMarker.icon.url = 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/pin_red.png';
+                    poisMarker.icon.url = 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/resource/pin_red.png';
                     poisMarker.events.triggerEvent("click");
                 }else{
-                    poisMarker.icon.url = 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/pin_green.png';
+                    poisMarker.icon.url = 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/resource/pin_green.png';
                 }
                 this.markerLayer.addMarker(poisMarker);
             })

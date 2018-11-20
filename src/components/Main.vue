@@ -4,7 +4,7 @@
           <navigation/>
           <list/>
         </div>
-        <dbinsert />
+        <dbinsert/>
         <searching v-if="showSearchingComponent" />
         <recommand v-if="showRecommandComponent" v-bind:pois = recommandPois />
         <tmap class="absolute"/>
@@ -28,7 +28,6 @@ export default {
       map: null,
       markerLayer: null,
       tData: null,
-      // recommandFlag: false,
       showStarPointModal: false,
       starPointPoi: null,
       showRecommandComponent: false,
@@ -47,6 +46,10 @@ export default {
     "searching": Searching
   },
   methods: {
+    setCenter(lon, lat){
+      var lonLat = new Tmap.LonLat(lon, lat);
+      this.map.setCenter(lonLat, 15);
+    },
     showRecommand(pois){
       this.showRecommandComponent = true;
       this.recommandPois = pois;

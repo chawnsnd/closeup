@@ -8,16 +8,18 @@ import MarkerPopup from "./MarkerPopup";
 // import recommandPois from "../tmp/recommandPois"
 
 export default {
-    // props: ['map'],
     components: {
         'marker-popup': MarkerPopup
     },
     data() {
         return {
-            map: null,
-            markerLayer: null,
+            map: new Tmap.Map({
+                width: window.innerWidth,
+                height: window.innerHeight
+            }),
+            markerLayer: new Tmap.Layer.Markers(),
             vectorLayer: null,
-            tData: null,
+            tData: new Tmap.TData(),
             personMarkers: [],
             poisMarkers: [],
             popups: [],
@@ -34,9 +36,9 @@ export default {
                 height: window.innerHeight
             });
             this.map.removeZoomControl();
-            this.markerLayer = new Tmap.Layer.Markers(); //마커 레이어 생성
+            // this.markerLayer = new Tmap.Layer.Markers(); //마커 레이어 생성
             this.map.addLayer(this.markerLayer); //map에 마커 레이어 추가
-            this.tData = new Tmap.TData();
+            // this.tData = new Tmap.TData();
             this.setCenter(14151544.45025370, 4484308.41146003);
             this.cluster();
         },
@@ -48,45 +50,7 @@ export default {
 	    	var offset = new Tmap.Pixel(-(size.w / 2), -(size.h));//아이콘 중심점 설정
             var icon = new Tmap.Icon(iconURL, size, offset);//마커 아이콘 설정
             var marker = new Tmap.Markers(lonlat, icon, label);//마커 생성
-            var popup = this.makePopup(poi);
-            this.popups.push(popup);
-            marker.events.register("click", marker, function(e){
-                self.popups.forEach(popup => {
-                    if(marker.labelHtml === popup.id) {
-                        self.map.addPopup(popup);
-                    }else{
-                        self.map.removePopup(popup);
-                    }
-                })
-            });
             return marker;
-        },
-        makePopup(poi){
-            var content = 
-                `<div style=' position: relative; border-bottom: 1px solid #dcdcdc; line-height: 18px; padding: 0 35px 2px 0;'>
-                    <div style='font-size: 12px; line-height: 15px;'>
-                        <span style='display: inline-block; width: 14px; height: 14px; font-weight: bold; background-image: url(/resources/images/common/icon_blet.png); vertical-align: middle; margin-right: 5px;'>${poi.name}</span>
-                    </div>
-                </div>
-                <div style='position: relative; padding-top: 5px; display:inline-block'>
-                    <div style='display:inline-block; border:1px solid #dcdcdc;'><img src=${poi.image} width='73' height='70'></div>
-                    <div style='display:inline-block; margin-left:5px; vertical-align: top; border-bottom: 1px solid #dcdcdc;'>
-                        <span style='font-size: 12px; margin-left:2px; margin-bottom:2px; display:block;'>${poi.upperAddrName} ${poi.middleAddrName} ${poi.roadName} ${poi.firstBuildNo}</span>
-                        <span style='font-size: 12px; color:#888; margin-left:2px; margin-bottom:2px; display:block;'>(지번)${poi.upperAddrName} ${poi.middleAddrName} ${poi.lowerAddrName} ${poi.detailAddrName} ${poi.firstNo} ${poi.secondNo}</span>
-                        <span style='font-size: 12px; color:gold; margin-left:2px; display:block;'><i class="fas fa-star"></i> ${poi.starPoint}</span>
-                    </div>
-                    <div style='display:inline-block; margin-left:5px; vertical-align: top;>
-                        ${poi.desc}
-                    </div>
-                </div>`;
-            var popup = new Tmap.Popup(poi.id,
-                new Tmap.LonLat(poi.lon, poi.lat),//Popup 이 표출될 맵 좌표
-                new Tmap.Size(180, 50),//Popup 크기
-                content
-            );
-            popup.setBorder("1px solid #8d8d8d");//popup border 조절
-            popup.autoSize=true;//popup 사이즈 자동 조절
-            return popup
         },
         setPersonMarker(poi, person){
             if(this.personMarkers[person] != null) this.markerLayer.removeMarker(this.personMarkers[person]);
@@ -134,7 +98,7 @@ export default {
             icons.push(new Tmap.Cluster.Icon("http://topopentile1.tmap.co.kr/tmapicon/map/clusterbg1.png", { width: 20, fontColor: "#333333", fontSize: 15 }));
             icons.push(new Tmap.Cluster.Icon("http://topopentile1.tmap.co.kr/tmapicon/map/clusterbg2.png", { width: 25, fontColor: "#333333", fontSize: 15 }));
             icons.push(new Tmap.Cluster.Icon("http://topopentile1.tmap.co.kr/tmapicon/map/clusterbg3.png", { width: 30, fontColor: "#333333", fontSize: 15 }));
-            this.markerCluster = new Tmap.Cluster.Layer(this.map, { markers: this.poisMarkers, icon: icons, gap: 30, distance: 70 });
+            this.markerCluster = new Tmap.Cluster.Layer(this.map, { markers: this.poisMarkers, icon: icons, gap: 1000, distance: 70 });
         },
         setCenter(lon, lat){
             var lonLat = new Tmap.LonLat(lon, lat);
@@ -150,6 +114,11 @@ export default {
             })
             this.cluster();
             this.setCenter(poi.lon, poi.lat);
+        },
+        dbStoreGetCenter(keyword){
+            console.log("adsf")
+            var center = this.map.getCenter();
+            this.eventBus.$emit('getTotPOISearch', keyword, center);
         }
     },
     mounted() {
@@ -161,6 +130,7 @@ export default {
         this.eventBus.$on("clickRecommandPoi", this.clickRecommandPoi);
         this.eventBus.$on("setPersonMarker", this.setPersonMarker);
         this.eventBus.$on("setPoisMarker", this.setPoisMarker);
+        this.eventBus.$on('dbStoreGetCenter', this.dbStoreGetCenter);
     }
 }
 </script>

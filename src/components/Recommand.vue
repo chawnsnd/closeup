@@ -5,12 +5,12 @@
             <div class="img"><img :src="poi.image" width="100px" height="100px"/></div>
             <div class="info">
                 <div class="first line">
-                    <span class="name">{{poi.rank}}등 {{poi.name}}</span>
+                    <span class="name">{{poi.name}}</span>
                 </div>
                 <div class="score"><span>{{poi.weight}}</span>점</div>
                 <div class="second line">
                     <div class="address">{{poi.upperAddrName}} {{poi.middleAddrName}} {{poi.lowerAddrName}} {{poi.detailAddrName}}</div>
-                    <div class="tel">TEL: {{poi.telNo}}</div>
+                    <div class="tel">TEL: <span v-if="poi.telNo!=''">{{poi.telNo}}</span><span v-else>없음</span></div>
                 </div>
                 <div class="third line categories">
                     <span class="category" v-for="(category, index) in poi.categories" :key="index">{{category}}</span>
@@ -18,7 +18,7 @@
                 <div class="fourth line">
                     <span class="starpoint"><i class="fas fa-star"></i> {{poi.starPoint}}</span>
                     <span class="evaluate" @click="starPoint(poi)">평가하기</span>
-                    <span class="google" @click="googleSearch(poi.name)">구글검색</span>
+                    <!-- <span class="google" @click="googleSearch(poi.name)">구글검색</span> -->
                 </div>
             </div>
         </div>
@@ -109,6 +109,13 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap; 
     margin-bottom: 15px;
+}
+.name{
+    width: 200px;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+    display: inline-block;
 }
 .score{
     float: right;

@@ -3,7 +3,7 @@
         <h2 style="cursor: pointer;" @click="showWindow = !showWindow">DB Insert <span v-if="!showWindow">▼</span><span v-else>▲</span></h2>
         <div v-if="showWindow" class="dbStoreKeyword">
             <div>
-                <label><input v-model="dbStoreKeyword" value="전체" type="radio" />전체</label>
+                <!-- <label><input v-model="dbStoreKeyword" value="전체" type="radio" />전체</label> -->
             </div>
             <div>
                 <label><input v-model="dbStoreKeyword" value="T와이파이존" type="radio" />T와이파이존</label>
@@ -96,8 +96,7 @@ export default {
     },
     methods: {
         onInsert(){
-            // this.eventBus.$emit('inputKeyword', this.dbStoreKeyword, 999);
-            this.eventBus.$emit('getTotPOISearch', this.dbStoreKeyword);
+            this.eventBus.$emit('dbStoreGetCenter', this.dbStoreKeyword);
         }
     }
 };

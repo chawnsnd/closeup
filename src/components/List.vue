@@ -17,12 +17,14 @@
 <script>
 import Pagination from './Pagination';
 import Socket from '../socket';
+import Tmap from './Tmap';
 export default {
     components: {
         "pagination": Pagination
     },
     data() {
         return{
+            map: Tmap.data(),
             pois: null,
             paging: {
                 count: 10,
@@ -69,23 +71,26 @@ export default {
             })
             .catch(err => { console.log(err) })
         },
-        getTotPOISearch(keyword) {
+        getTotPOISearch(keyword, center) {
             this.dbInserting = true
             this.keyword = keyword
+            this.center = center
             var self = this;
-	  	    var url = "https://api2.sktelecom.com/tmap/pois";//POI 검색 api url 입니다
+	  	    var url = "https://api2.sktelecom.com/tmap/pois/search/around";//POI 검색 api url 입니다
             var params = {
                     "version" : "1"//버전
                     ,"page" : this.paging.curPage//페이지
                     ,"count"  : 200//페이지당 검색수
-                    ,"searchKeyword" : this.keyword //검색어
-                    ,"searchtypCd" : "A"//R: 거리순 / A:정확도순
+                    ,"categories" : this.keyword //검색어
+                    // ,"searchtypCd" : "R"//R: 거리순 / A:정확도순
+                    ,"radius"  : 33
                     ,"appKey"  : this.gAppKey //앱키
                     ,"reqCoordType" : "EPSG3857"
                     ,"resCoordType" : "EPSG3857"
-                    // ,"ceterLon" : 
-                    // ,"centerLat" : 
+                    ,"centerLon" : this.center.lon
+                    ,"centerLat" : this.center.lat
             };
+            console.log(params)
             this.loading = true;
 	  	    $.get( url, params, function(data){
                 if( data ) { // POI 통합검색 요청 성공 시 작업

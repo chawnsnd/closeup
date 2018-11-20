@@ -4,13 +4,7 @@
 </template>
 
 <script>
-import MarkerPopup from "./MarkerPopup";
-// import recommandPois from "../tmp/recommandPois"
-
 export default {
-    components: {
-        'marker-popup': MarkerPopup
-    },
     data() {
         return {
             map: new Tmap.Map({

@@ -33,82 +33,36 @@
         <div class="filtertap" :class="{active: showFilter }" @click="showFilter = !showFilter"><i class="fas fa-filter"> {{category}}</i></div>
         <div class="filter" v-if="showFilter">
             <div><span>전체</span>
-                <label><input v-model="category" @click="setCategory()" value="" type="radio" />전체</label>
+                <label><input v-model="category" value="" type="radio" />전체</label>
             </div>
             <div><span>생활</span>
-                <label><input v-model="category" @click="setCategory()" value="T와이파이존" type="radio" />T와이파이존</label>
-                <label><input v-model="category" @click="setCategory()" value="목욕탕" type="radio" />목욕탕</label>
-                <label><input v-model="category" @click="setCategory()" value="숙박" type="radio" />숙박</label>
-                <label><input v-model="category" @click="setCategory()" value="쇼핑" type="radio" />쇼핑</label>
-                <label><input v-model="category" @click="setCategory()" value="관공서" type="radio" />관공서</label>
-                <label><input v-model="category" @click="setCategory()" value="주요시설물" type="radio" />주요시설물</label>
-                <label><input v-model="category" @click="setCategory()" value="은행" type="radio" />은행</label>
-                <label><input v-model="category" @click="setCategory()" value="ATM" type="radio" />ATM</label>
-                <label><input v-model="category" @click="setCategory()" value="편의점" type="radio" />편의점</label>
-                <label><input v-model="category" @click="setCategory()" value="미용실" type="radio" />미용실</label>
-                <label><input v-model="category" @click="setCategory()" value="이발소" type="radio" />이발소</label>
-                <label><input v-model="category" @click="setCategory()" value="대형마트" type="radio" />대형마트</label>
-                <label><input v-model="category" @click="setCategory()" value="화장실" type="radio" />화장실</label>
-                <label><input v-model="category" @click="setCategory()" value="공원" type="radio" />공원</label>
-                <label><input v-model="category" @click="setCategory()" value="커피" type="radio" />커피</label>
-                <label><input v-model="category" @click="setCategory()" value="음식" type="radio" />음식</label>
-                <label><input v-model="category" @click="setCategory()" value="레저" type="radio" />레저</label>
-                <label><input v-model="category" @click="setCategory()" value="호텔" type="radio" />호텔</label>
-                <label><input v-model="category" @click="setCategory()" value="마트" type="radio" />마트</label>
+                <label><input v-model="category" value="숙박" type="radio" />숙박</label>
+                <label><input v-model="category" value="쇼핑" type="radio" />쇼핑</label>
+                <label><input v-model="category" value="편의점" type="radio" />편의점</label>
+                <label><input v-model="category" value="대형마트" type="radio" />대형마트</label>
+                <label><input v-model="category" value="마트" type="radio" />마트</label>
             </div>
             <div><span>식음료</span>
-                <label><input v-model="category" @click="setCategory()" value="식음료" type="radio" />식음료</label>
-                <label><input v-model="category" @click="setCategory()" value="TV맛집" type="radio" />TV맛집</label>
-                <label><input v-model="category" @click="setCategory()" value="카페" type="radio" />카페</label>
-                <label><input v-model="category" @click="setCategory()" value="한식" type="radio" />한식</label>
-                <label><input v-model="category" @click="setCategory()" value="중식" type="radio" />중식</label>
-                <label><input v-model="category" @click="setCategory()" value="일식" type="radio" />일식</label>
-                <label><input v-model="category" @click="setCategory()" value="양식" type="radio" />양식</label>
-                <label><input v-model="category" @click="setCategory()" value="패밀리레스토랑" type="radio" />패밀리레스토랑</label>
-                <label><input v-model="category" @click="setCategory()" value="전문음식점" type="radio" />전문음식점</label>
-                <label><input v-model="category" @click="setCategory()" value="피자" type="radio" />피자</label>
-                <label><input v-model="category" @click="setCategory()" value="치킨" type="radio" />치킨</label>
-                <label><input v-model="category" @click="setCategory()" value="디저트" type="radio" />디저트</label>
-                <label><input v-model="category" @click="setCategory()" value="제과점" type="radio" />제과점</label>
-                <label><input v-model="category" @click="setCategory()" value="베스킨라빈스" type="radio" />베스킨라빈스</label>
-                <label><input v-model="category" @click="setCategory()" value="하겐다즈" type="radio" />하겐다즈</label>
-                <label><input v-model="category" @click="setCategory()" value="나뚜루" type="radio" />나뚜루</label>
-                <label><input v-model="category" @click="setCategory()" value="콜드스톤" type="radio" />콜드스톤</label>
-                <label><input v-model="category" @click="setCategory()" value="패스트푸드" type="radio" />패스트푸드</label>
+                <label><input v-model="category" value="카페" type="radio" />카페</label>
+                <label><input v-model="category" value="한식" type="radio" />한식</label>
+                <label><input v-model="category" value="중식" type="radio" />중식</label>
+                <label><input v-model="category" value="일식" type="radio" />일식</label>
+                <label><input v-model="category" value="양식" type="radio" />양식</label>
+                <label><input v-model="category" value="패밀리레스토랑" type="radio" />패밀리레스토랑</label>
+                <label><input v-model="category" value="피자" type="radio" />피자</label>
+                <label><input v-model="category" value="치킨" type="radio" />치킨</label>
+                <label><input v-model="category" value="디저트" type="radio" />디저트</label>
+                <label><input v-model="category" value="패스트푸드" type="radio" />패스트푸드</label>
             </div>
             <div><span>교통</span>
-                <label><input v-model="category" @click="setCategory()" value="교통" type="radio" />교통</label>
-                <label><input v-model="category" @click="setCategory()" value="버스" type="radio" />버스</label>
-                <label><input v-model="category" @click="setCategory()" value="버스정류장" type="radio" />버스정류장</label>
-                <label><input v-model="category" @click="setCategory()" value="지하철" type="radio" />지하철</label>
-                <label><input v-model="category" @click="setCategory()" value="주유소" type="radio" />주유소</label>
-                <label><input v-model="category" @click="setCategory()" value="충전소" type="radio" />충전소</label>
-                <label><input v-model="category" @click="setCategory()" value="주차장" type="radio" />주차장</label>
-                <label><input v-model="category" @click="setCategory()" value="정비소" type="radio" />정비소</label>
-                <label><input v-model="category" @click="setCategory()" value="EV충전소" type="radio" />EV충전소</label>
-                <label><input v-model="category" @click="setCategory()" value="EV" type="radio" />EV</label>
-                <label><input v-model="category" @click="setCategory()" value="가스충전소" type="radio" />가스충전소</label>
-            </div>
-            <div><span>병원</span>
-                <label><input v-model="category" @click="setCategory()" value="병원" type="radio" />병원</label>
-                <label><input v-model="category" @click="setCategory()" value="약국" type="radio" />약국</label>
-                <label><input v-model="category" @click="setCategory()" value="내과" type="radio" />내과</label>
-                <label><input v-model="category" @click="setCategory()" value="소아과" type="radio" />소아과</label>
-                <label><input v-model="category" @click="setCategory()" value="외과" type="radio" />외과</label>
-                <label><input v-model="category" @click="setCategory()" value="치과" type="radio" />치과</label>
-                <label><input v-model="category" @click="setCategory()" value="안과" type="radio" />안과</label>
-                <label><input v-model="category" @click="setCategory()" value="의원" type="radio" />의원</label>
-                <label><input v-model="category" @click="setCategory()" value="보건소" type="radio" />보건소</label>
-                <label><input v-model="category" @click="setCategory()" value="한의원" type="radio" />한의원</label>
+                <label><input v-model="category" value="버스정류장" type="radio" />버스정류장</label>
+                <label><input v-model="category" value="지하철" type="radio" />지하철</label>
             </div>
             <div><span>놀거리</span>
-                <label><input v-model="category" @click="setCategory()" value="놀거리" type="radio" />놀거리</label>
-                <label><input v-model="category" @click="setCategory()" value="영화관" type="radio" />영화관</label>
-                <label><input v-model="category" @click="setCategory()" value="노래방" type="radio" />노래방</label>
-                <label><input v-model="category" @click="setCategory()" value="PC방" type="radio" />PC방</label>
-                <label><input v-model="category" @click="setCategory()" value="공연장" type="radio" />공연장</label>
-                <label><input v-model="category" @click="setCategory()" value="문화시설" type="radio" />문화시설</label>
-                <label><input v-model="category" @click="setCategory()" value="스크린골프장" type="radio" />스크린골프장</label>
+                <label><input v-model="category" value="영화관" type="radio" />영화관</label>
+                <label><input v-model="category" value="노래방" type="radio" />노래방</label>
+                <label><input v-model="category" value="PC방" type="radio" />PC방</label>
+                <label><input v-model="category" value="스크린골프장" type="radio" />스크린골프장</label>
             </div>
         </div>
 
@@ -153,19 +107,14 @@ export default {
             this.pois[index].name = poi.name;
             this.pois[index].keyword = poi.name;
         },
-        setCategory(){
-            for(var idx in this.pois){
-                if(this.pois[idx].name === null) return;
-            }
-            this.recommand();
-        },
         clickRecommand(){
             for(var idx in this.pois){
                 if(this.pois[idx].name === null) return alert("않이! 사람을 추가했으면 장소를 채우셔야죠, 답답한 양반아...");
             }
-            this.recommand();
+            this.recommand(this.category);
         },
-        recommand(){
+        recommand(category){
+            console.log(category)
             this.eventBus.$emit('showSearching', true);
             var lonLats = [];
             this.paramPois.forEach(poi => {
@@ -176,7 +125,7 @@ export default {
             var param = {
                 command: "recommend_api",
                 people_chosen: lonLats,
-                keyWord: this.category
+                keyWord: category
             }
             Socket
             .send(param)
@@ -187,7 +136,7 @@ export default {
             })
             .catch(err => { 
                 if(err === 'no search poi') this.recommandPois = [];
-                console.log(err) 
+                console.log(err)
             })
             .finally(() => {
                 this.eventBus.$emit('showSearching', false);
@@ -302,7 +251,7 @@ export default {
     left: 358px;
     background-color: white;
     border: 1px solid #eaeaea;
-    width: 1400px;
+    width: 800px;
     padding-left: 10px;
     padding-right: 10px;
     text-align: left;

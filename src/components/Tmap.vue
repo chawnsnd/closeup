@@ -30,11 +30,11 @@ export default {
             // this.tData = new Tmap.TData();
             this.setCenter(14151544.45025370, 4484308.41146003);
         },
-        makeMarker(poi, iconURL) {
+        makeMarker(poi, size, iconURL) {
             var self = this;
             var lonlat = new Tmap.LonLat(poi.lon, poi.lat);
             var label = new Tmap.Label(poi.id);
-            var size = new Tmap.Size(24, 38);//아이콘 크기 설정
+            var size = new Tmap.Size(12*size, 19*size);//아이콘 크기 설정
 	    	var offset = new Tmap.Pixel(-(size.w / 2), -(size.h));//아이콘 중심점 설정
             var icon = new Tmap.Icon(iconURL, size, offset);//마커 아이콘 설정
             var marker = new Tmap.Markers(lonlat, icon, label);//마커 생성
@@ -42,7 +42,7 @@ export default {
         },
         setPersonMarker(poi, person){
             if(this.personMarkers[person] != null) this.markerLayer.removeMarker(this.personMarkers[person]);
-            var marker = this.makeMarker(poi, 'http://tmapapis.sktelecom.com/upload/tmap/marker/pin_b_m_'+String(person+1)+'.png');
+            var marker = this.makeMarker(poi, 2, 'http://tmapapis.sktelecom.com/upload/tmap/marker/pin_b_m_'+String(person+1)+'.png');
             this.personMarkers[person] = marker;
             this.markerLayer.addMarker(this.personMarkers[person]);
             this.setCenter(poi.lon, poi.lat);
@@ -52,7 +52,7 @@ export default {
             this.poisMarkers.forEach(poisMarker => { this.markerLayer.removeMarker(poisMarker) });
             this.poisMarkers = [];
             pois.forEach(poi => {
-                var marker = this.makeMarker(poi, 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/resource/pin_green.png');
+                var marker = this.makeMarker(poi, 1.5, 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/resource/pin_green.png');
                 this.poisMarkers.push(marker)
                 this.markerLayer.addMarker(marker)
             });
@@ -71,13 +71,17 @@ export default {
         },
         clickRecommandPoi(poi){
             this.poisMarkers.forEach(poisMarker => {
-                if(poisMarker.id == poi.id){
-                    poisMarker.attributes.icon = 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/resource/pin_red.png';
+                this.markerLayer.removeMarker(poisMarker)
+                if(poisMarker.labelHtml === poi.id){
+                    poisMarker.icon.url = 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/resource/pin_red.png';
+                    poisMarker.icon.size = new Tmap.Size(12*2, 19*2)
                 }else{
-                    poisMarker.attributes.icon = 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/resource/pin_green.png';
+                    poisMarker.icon.url = 'https://s3.ap-northeast-2.amazonaws.com/closeup-s3/resource/pin_green.png';
+                    poisMarker.icon.size = new Tmap.Size(12*1.5, 19*1.5)
                 }
+                this.markerLayer.addMarker(poisMarker)
+                this.setCenter(poi.lon, poi.lat);
             })
-            this.setCenter(poi.lon, poi.lat);
         },
         dbStoreGetCenter(keyword){
             var center = this.map.getCenter();

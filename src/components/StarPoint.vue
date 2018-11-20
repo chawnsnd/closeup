@@ -3,7 +3,6 @@
         <div class="modal" @keyup.esc="$emit('close')">
             <div class="modal_container">
                 <div class="modal_header">
-                    <img v-if="poi.image!=null" :src="poi.image" class="image"/>
                     <span class="modal_name">{{poi.name}}</span>
                     <span class="exit" @click="$emit('close')">X</span>
                 </div>
@@ -34,10 +33,7 @@ export default {
     data() {
         return{
             starPoint: 0,
-            flag: false,
-            poi: {
-                image: ''
-            }
+            flag: false
         }
     },
     methods: {
@@ -54,17 +50,6 @@ export default {
             .then(res => { console.log(res) })
             .catch(err => { console.log(err) })
         },
-        // selectPoiByDb(){
-        //     var self = this;
-        //     var param = {
-        //         command: "query_poi",
-        //         id: self.id
-        //     };
-        //     Socket
-        //     .send(param)
-        //     .then(res => { self.poi = res })
-        //     .catch(err => { console.log(err) })
-        // }
     },
     mounted(){
     }
@@ -87,10 +72,10 @@ export default {
         vertical-align: middle;
         .modal_header{
             position: relative;
+            background-color: rgba(0, 0, 0, .5);
             margin: 0px auto;
             width: 30%;
             color: white;
-            background-color: white;
             height: 150px;
         }
         .modal_content {
@@ -104,18 +89,12 @@ export default {
     }
 }
 .modal_name{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    line-height: 150px;
+    text-align: center;
     font-size: 33px;
     font-weight: bold;
-    padding: 10px;
-    border-radius: 10px;
-    background-color: rgba(0, 0, 0, .5);
     overflow: hidden; 
     text-overflow: ellipsis;
-    white-space: nowrap; 
 }
 .image{
     position: absolute;

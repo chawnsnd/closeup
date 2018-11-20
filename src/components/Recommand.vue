@@ -2,23 +2,24 @@
     <div class="recommand" v-if="pois!=null">
         <div class="title"> <span>CloseUp</span>이 추천하는 BEST 장소</div>
         <div class="r_poi" v-for="(poi, index) in paginatedData" :key="index" @click="clickPoi(poi)">
-            <div class="img"><img :src="poi.image" width="100px" height="100px"/></div>
             <div class="info">
                 <div class="first line">
                     <span class="name">{{poi.name}}</span>
+                    <span class="score">{{poi.weight}}점</span>
                 </div>
-                <div class="score"><span>{{poi.weight}}</span>점</div>
                 <div class="second line">
                     <div class="address">{{poi.upperAddrName}} {{poi.middleAddrName}} {{poi.lowerAddrName}} {{poi.detailAddrName}}</div>
-                    <div class="tel">TEL: <span v-if="poi.telNo!=''">{{poi.telNo}}</span><span v-else>없음</span></div>
+                    <div class="tel">
+                        TEL: 
+                        <span v-if="poi.telNo==''||poi.telNo==' '">정보없음</span>
+                        <span v-else>{{poi.telNo}}</span>
+                    </div>
                 </div>
                 <div class="third line categories">
                     <span class="category" v-for="(category, index) in poi.categories" :key="index">{{category}}</span>
                 </div>
                 <div class="fourth line">
-                    <span class="starpoint"><i class="fas fa-star"></i> {{poi.starPoint}}</span>
-                    <span class="evaluate" @click="starPoint(poi)">평가하기</span>
-                    <!-- <span class="google" @click="googleSearch(poi.name)">구글검색</span> -->
+                    <span class="starpoint" @click="starPoint(poi)"><i class="fas fa-star"></i> {{poi.starPoint}}</span>
                 </div>
             </div>
         </div>
@@ -109,21 +110,20 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap; 
     margin-bottom: 15px;
-}
-.name{
-    width: 200px;
-    overflow: hidden; 
-    text-overflow: ellipsis;
-    white-space: nowrap; 
-    display: inline-block;
-}
-.score{
-    float: right;
-    span{
-        color: red;
+    .name{
+        overflow: hidden; 
+        text-overflow: ellipsis;
+        white-space: nowrap; 
+        display: inline-block;
+        width: 280px;
     }
-    font-size: 15px;
-    font-weight: bold;
+    .score{
+        display: inline-block;
+        float: right;
+        color: red;
+        font-size: 15px;
+        font-weight: bold;
+    }
 }
 .second{
     font-size: 12px;
@@ -139,13 +139,9 @@ export default {
 }
 .starpoint{
     color: gold;
-}
-.evaluate{
-    margin-left: 5px;
-    color: #ff2f6e;
-    font-size: 13px;
+    float: right;
     &:hover{
-        text-decoration: underline;
+        color: goldenrod;
     }
 }
 .google{

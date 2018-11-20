@@ -134,8 +134,11 @@ export default {
                 this.eventBus.$emit('showRecommandComponent', this.recommandPois);
                 this.eventBus.$emit('setPoisMarker', this.recommandPois);
             })
-            .catch(err => { 
-                if(err === 'no search poi') this.recommandPois = [];
+            .catch(err => {
+                if(err === 'no search poi'){
+                    console.log("검색결과 없음")
+                    this.recommandPois = [];
+                }
                 console.log(err)
             })
             .finally(() => {

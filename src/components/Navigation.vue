@@ -123,7 +123,7 @@ export default {
             });
             // this.param.pois를 통해 recommandPois를 얻을 것
             this.axios
-            .get(`http://localhost:5000/api/pois`, {
+            .get(`http://localhost:5000/api/recommendPois`, {
                 params : {
                     people_chosen: lonLats,
                     keyWord: category

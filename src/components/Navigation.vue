@@ -114,7 +114,6 @@ export default {
             this.recommand(this.category);
         },
         recommand(category){
-            console.log(category)
             this.eventBus.$emit('showSearching', true);
             var lonLats = [];
             this.paramPois.forEach(poi => {
@@ -133,27 +132,14 @@ export default {
                 this.recommandPois = res.data;
                 this.eventBus.$emit('showRecommandComponent', this.recommandPois);
                 this.eventBus.$emit('setPoisMarker', this.recommandPois);
+                
             })
             .catch(err => {
                 alert("장소추천에 실패했습니다.", err);
             })
-            // Socket
-            // .send(param)
-            // .then(res => { 
-            //     this.recommandPois = res;
-            //     this.eventBus.$emit('showRecommandComponent', this.recommandPois);
-            //     this.eventBus.$emit('setPoisMarker', this.recommandPois);
-            // })
-            // .catch(err => {
-            //     if(err === 'no search poi'){
-            //         console.log("검색결과 없음")
-            //         this.recommandPois = [];
-            //     }
-            //     console.log(err)
-            // })
-            // .finally(() => {
-            //     this.eventBus.$emit('showSearching', false);
-            // })
+            .finally(() => 
+                this.eventBus.$emit('showSearching', false)
+            )
         },
         onEnter(index) {
             this.eventBus.$emit('inputKeyword', this.pois[index].keyword, index);

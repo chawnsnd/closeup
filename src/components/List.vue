@@ -71,15 +71,6 @@ export default {
             .catch(err => {
                 console.log("리스트 검색에 실패했습니다.",err);
             })
-            // Socket
-            // .send(param)
-            // .then(res => {
-            //     self.pois = res.pois;
-            //     self.paging.totalCount = res.totalCount
-            //     self.paging.maxPage = Math.ceil(res.totalCount/self.paging.count);
-            //     self.clickPOI(self.pois[0]);
-            // })
-            // .catch(err => { console.log(err) })
         },
         getTotPOISearch(keyword, center) {
             this.dbInserting = true

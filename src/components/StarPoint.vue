@@ -38,13 +38,14 @@ export default {
     },
     methods: {
         submitPoint(){
+            var self = this;
             var param = {
                 starPoint: this.starPoint
             };
             this.axios
             .put(`http://localhost:5000/api/pois/${this.poi.id}`, param)
             .then(res => {
-                this.flag = true;
+                self.flag = true;
                 console.log(res.data.response)
             })
             .catch(err => {

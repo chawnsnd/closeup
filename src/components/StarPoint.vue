@@ -42,7 +42,7 @@ export default {
                 starPoint: this.starPoint
             };
             this.axios
-            .put(`/pois/${this.poi.id}`, param)
+            .put(`http://localhost:5000/api/pois/${this.poi.id}`, param)
             .then(res => {
                 this.flag = true;
                 console.log(res)

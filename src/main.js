@@ -7,7 +7,7 @@ import eventBus from './eventBus.js'
 import eventBusPlugin from './eventBusPlugin.js';
 import Socket from './socket.js';
 import VueAxios from 'vue-axios';
-import axios from './customAxios.js'
+import axios from 'axios'
 
 
 Vue.config.productionTip = false

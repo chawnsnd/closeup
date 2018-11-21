@@ -127,7 +127,7 @@ export default {
                 keyWord: category
             }
             this.axios
-            .get(`/pois`, param)
+            .get(`http://localhost:5000/api/pois`, param)
             .then(res => {
                 this.recommandPois = res;
                 this.eventBus.$emit('showRecommandComponent', this.recommandPois);

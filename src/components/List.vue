@@ -61,7 +61,7 @@ export default {
                 collection: "TestPoisCollection"
             };
             this.axios
-            .get(`/pois`, param)
+            .get(`http://localhost:5000/api/pois`, param)
             .then(res => {
                 this.pois = res.pois;
                 this.paging.totalCount = res.totalCount
@@ -153,7 +153,7 @@ export default {
                 categories: [keyword],
             };
             this.axios
-            .post(`/pois`, param)
+            .post(`http://localhost:5000/api/pois`, param)
             .then(res => {
                 console.log(res)
             })

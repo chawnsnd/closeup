@@ -6,7 +6,6 @@ import router from './router'
 import eventBus from './eventBus.js'
 import eventBusPlugin from './eventBusPlugin.js';
 import Socket from './socket.js';
-import axios from 'axios';
 import VueAxios from 'vue-axios';
 import axios from './customAxios.js'
 

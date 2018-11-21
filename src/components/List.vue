@@ -55,21 +55,31 @@ export default {
         getPoiFromDb(){
             var self = this;
             var param = {
-                command: "query_pois",
                 keyWord: this.keyword,
                 count: this.paging.count,
                 page: this.paging.curPage,
                 collection: "TestPoisCollection"
             };
-            Socket
-            .send(param)
+            this.axios
+            .get(`/pois`, param)
             .then(res => {
-                self.pois = res.pois;
-                self.paging.totalCount = res.totalCount
-                self.paging.maxPage = Math.ceil(res.totalCount/self.paging.count);
-                self.clickPOI(self.pois[0]);
+                this.pois = res.pois;
+                this.paging.totalCount = res.totalCount
+                this.paging.maxPage = Math.ceil(res.totalCount/this.paging.count);
+                this.clickPOI(self.pois[0]);
             })
-            .catch(err => { console.log(err) })
+            .catch(err => {
+                console.log("리스트 검색에 실패했습니다.",err);
+            })
+            // Socket
+            // .send(param)
+            // .then(res => {
+            //     self.pois = res.pois;
+            //     self.paging.totalCount = res.totalCount
+            //     self.paging.maxPage = Math.ceil(res.totalCount/self.paging.count);
+            //     self.clickPOI(self.pois[0]);
+            // })
+            // .catch(err => { console.log(err) })
         },
         getTotPOISearch(keyword, center) {
             this.dbInserting = true
@@ -139,14 +149,21 @@ export default {
         dbStore(pois, keyword){
             var sendPois = this.preProcess(pois);
             var param = {
-                command: "insert_pois",
                 pois: sendPois,
                 categories: [keyword],
             };
-            Socket
-            .send(param)
-            .then(res => { console.log(res) })
-            .catch(err => { console.log(err) })
+            this.axios
+            .post(`/pois`, param)
+            .then(res => {
+                console.log(res)
+            })
+            .catch(err => {
+                console.log("디비저장에 실패했습니다.",err);
+            })
+            // Socket
+            // .send(param)
+            // .then(res => { console.log(res) })
+            // .catch(err => { console.log(err) })
         },
         changePage(page){
             this.paging.curPage = page;

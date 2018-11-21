@@ -38,17 +38,22 @@ export default {
     },
     methods: {
         submitPoint(){
-            this.flag = true;
-            var self = this;
             var param = {
-                command: "update_star",
-                id: self.poi.id,
-                starPoint: self.starPoint
+                starPoint: this.starPoint
             };
-            Socket
-            .send(param)
-            .then(res => { console.log(res) })
-            .catch(err => { console.log(err) })
+            this.axios
+            .put(`/pois/${this.poi.id}`, param)
+            .then(res => {
+                this.flag = true;
+                console.log(res)
+            })
+            .catch(err => {
+                console.log("별점 업데이트에 실패했습니다.",err);
+            })
+            // Socket
+            // .send(param)
+            // .then(res => { console.log(res) })
+            // .catch(err => { console.log(err) })
         },
     },
     mounted(){

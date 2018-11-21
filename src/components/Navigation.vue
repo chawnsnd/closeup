@@ -123,27 +123,36 @@ export default {
             });
             // this.param.pois를 통해 recommandPois를 얻을 것
             var param = {
-                command: "recommend_api",
                 people_chosen: lonLats,
                 keyWord: category
             }
-            Socket
-            .send(param)
-            .then(res => { 
+            this.axios
+            .get(`/pois`, param)
+            .then(res => {
                 this.recommandPois = res;
                 this.eventBus.$emit('showRecommandComponent', this.recommandPois);
                 this.eventBus.$emit('setPoisMarker', this.recommandPois);
             })
             .catch(err => {
-                if(err === 'no search poi'){
-                    console.log("검색결과 없음")
-                    this.recommandPois = [];
-                }
-                console.log(err)
+                alert("장소추천에 실패했습니다.", err);
             })
-            .finally(() => {
-                this.eventBus.$emit('showSearching', false);
-            })
+            // Socket
+            // .send(param)
+            // .then(res => { 
+            //     this.recommandPois = res;
+            //     this.eventBus.$emit('showRecommandComponent', this.recommandPois);
+            //     this.eventBus.$emit('setPoisMarker', this.recommandPois);
+            // })
+            // .catch(err => {
+            //     if(err === 'no search poi'){
+            //         console.log("검색결과 없음")
+            //         this.recommandPois = [];
+            //     }
+            //     console.log(err)
+            // })
+            // .finally(() => {
+            //     this.eventBus.$emit('showSearching', false);
+            // })
         },
         onEnter(index) {
             this.eventBus.$emit('inputKeyword', this.pois[index].keyword, index);

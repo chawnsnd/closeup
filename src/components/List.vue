@@ -62,10 +62,11 @@ export default {
                 }
             })
             .then(res => {
-                this.pois = res.pois;
-                this.paging.totalCount = res.totalCount
-                this.paging.maxPage = Math.ceil(res.totalCount/this.paging.count);
-                this.clickPOI(self.pois[0]);
+                console.log(res)
+                this.pois = res.data.pois;
+                this.paging.totalCount = res.data.totalCount
+                this.paging.maxPage = Math.ceil(res.data.totalCount/this.paging.count);
+                this.clickPOI(this.pois[0]);
             })
             .catch(err => {
                 console.log("리스트 검색에 실패했습니다.",err);
@@ -154,7 +155,7 @@ export default {
             this.axios
             .post(`http://localhost:5000/api/pois`, param)
             .then(res => {
-                console.log(res)
+                console.log(res.data.response)
             })
             .catch(err => {
                 console.log("디비저장에 실패했습니다.",err);

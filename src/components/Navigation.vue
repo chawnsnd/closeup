@@ -122,14 +122,15 @@ export default {
                 lonLats.push(lonLat);
             });
             // this.param.pois를 통해 recommandPois를 얻을 것
-            var param = {
-                people_chosen: lonLats,
-                keyWord: category
-            }
             this.axios
-            .get(`http://localhost:5000/api/pois`, param)
+            .get(`http://localhost:5000/api/pois`, {
+                params : {
+                    people_chosen: lonLats,
+                    keyWord: category
+                }
+            })
             .then(res => {
-                this.recommandPois = res;
+                this.recommandPois = res.data;
                 this.eventBus.$emit('showRecommandComponent', this.recommandPois);
                 this.eventBus.$emit('setPoisMarker', this.recommandPois);
             })

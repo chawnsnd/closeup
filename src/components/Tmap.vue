@@ -83,6 +83,10 @@ export default {
                 this.setCenter(poi.lon, poi.lat);
             })
         },
+        removeMarker(index){
+            this.markerLayer.removeMarker(this.personMarkers[index]);
+            this.personMarkers.splice(index,1);
+        },
         dbStoreGetCenter(keyword){
             var center = this.map.getCenter();
             this.eventBus.$emit('getTotPOISearch', keyword, center);
@@ -98,6 +102,7 @@ export default {
         this.eventBus.$on("setPersonMarker", this.setPersonMarker);
         this.eventBus.$on("setPoisMarker", this.setPoisMarker);
         this.eventBus.$on('dbStoreGetCenter', this.dbStoreGetCenter);
+        this.eventBus.$on('removeMarker', this.removeMarker);
     }
 }
 </script>

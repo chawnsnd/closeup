@@ -16,7 +16,6 @@
 
 <script>
 import Pagination from './Pagination';
-import Socket from '../socket';
 import Tmap from './Tmap';
 export default {
     components: {
@@ -54,7 +53,7 @@ export default {
         },
         getPoiFromDb(){
             this.axios
-            .get(`http://localhost:5000/api/pois`, {
+            .get(`http://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:5000/api/pois`, {
                 params : {
                     keyWord: this.keyword,
                     count: this.paging.count,
@@ -144,17 +143,13 @@ export default {
                 categories: [keyword],
             };
             this.axios
-            .post(`http://localhost:5000/api/pois`, param)
+            .post(`http://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:5000/api/pois`, param)
             .then(res => {
                 console.log(res.data.response)
             })
             .catch(err => {
                 console.log("디비저장에 실패했습니다.",err);
             })
-            // Socket
-            // .send(param)
-            // .then(res => { console.log(res) })
-            // .catch(err => { console.log(err) })
         },
         changePage(page){
             this.paging.curPage = page;

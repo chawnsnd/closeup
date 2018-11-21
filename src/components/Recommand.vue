@@ -5,10 +5,13 @@
             <div class="info">
                 <div class="first line">
                     <span class="name">{{poi.name}}</span>
-                    <span class="score">{{poi.weight}}점</span>
+                    <span class="score"><div>추천점수</div><div>{{poi.weight}}점</div></span>
                 </div>
                 <div class="second line">
-                    <div class="address">{{poi.upperAddrName}} {{poi.middleAddrName}} {{poi.lowerAddrName}} {{poi.detailAddrName}}</div>
+                    <div class="address">
+                        <div>{{poi.upperAddrName}} {{poi.middleAddrName}} {{poi.lowerAddrName}} {{poi.roadName}} {{poi.firstBuildNo}}</div>
+                        <div class="zibeon">지번 : {{poi.upperAddrName}} {{poi.middleAddrName}} {{poi.lowerAddrName}} {{poi.detailAddrName}} {{poi.firstNo}}</div>
+                    </div>
                     <div class="tel">
                         TEL: 
                         <span v-if="poi.telNo==''||poi.telNo==' '">정보없음</span>
@@ -16,10 +19,11 @@
                     </div>
                 </div>
                 <div class="third line categories">
-                    <span class="category" v-for="(category, index) in poi.categories" :key="index">{{category}}</span>
+                    <span class="category" v-if="category!=null" v-for="(category, index) in poi.categories" :key="index">{{category}}</span>
                 </div>
                 <div class="fourth line">
-                    <span class="starpoint" @click="starPoint(poi)"><i class="fas fa-star"></i> {{poi.starPoint}}</span>
+                    <span class="starpoint" v-if="poi.starPoint!=0" @click="starPoint(poi)">사용자별점 <i class="fas fa-star"></i> {{poi.starPoint.toFixed(1)}}</span>
+                    <span class="starpoint_none" v-else @click="starPoint(poi)">사용자별점 <i class="fas fa-star"></i> 없음</span>
                 </div>
             </div>
         </div>
@@ -109,15 +113,15 @@ export default {
     overflow: hidden; 
     text-overflow: ellipsis;
     white-space: nowrap; 
-    margin-bottom: 15px;
     .name{
         overflow: hidden; 
         text-overflow: ellipsis;
         white-space: nowrap; 
         display: inline-block;
-        width: 280px;
+        width: 250px;
     }
     .score{
+        text-align: right;
         display: inline-block;
         float: right;
         color: red;
@@ -128,6 +132,14 @@ export default {
 .second{
     font-size: 12px;
     margin-bottom: 5px;
+}
+.address{
+    color: black;
+    font-size: 13px;
+    .zibeon{
+        font-size: 12px;
+        color: grey;
+    }
 }
 .category{
     margin-right: 10px;
@@ -143,6 +155,10 @@ export default {
     &:hover{
         color: goldenrod;
     }
+}
+.starpoint_none{
+    float: right;
+    color: grey;
 }
 .google{
     float: right;

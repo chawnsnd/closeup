@@ -71,8 +71,6 @@
 </template>
 
 <script>
-import Socket from '../socket';
-// import recommandPois from "../tmp/recommandPois"
 import Btn from "./Btn";
 
 export default {
@@ -114,6 +112,7 @@ export default {
             this.recommand(this.category);
         },
         recommand(category){
+            this.showFilter = false;
             this.eventBus.$emit('showSearching', true);
             var lonLats = [];
             this.paramPois.forEach(poi => {
@@ -122,7 +121,7 @@ export default {
             });
             // this.param.pois를 통해 recommandPois를 얻을 것
             this.axios
-            .get(`http://localhost:5000/api/recommendPois`, {
+            .get(`http://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:5000/api/recommendPois`, {
                 params : {
                     people_chosen: lonLats,
                     keyWord: category
@@ -146,6 +145,7 @@ export default {
         },
         removePoi(index){
             this.pois.splice(index,1);
+            this.paramPois.splice(index,1);
             this.eventBus.$emit('removeMarker', index);
         }
     },
@@ -165,7 +165,7 @@ export default {
 }
 .scroll{
     overflow-y: scroll; 
-    // max-height:156px;
+    max-height:156px;
     -ms-overflow-style: none;
 }
 .poi{

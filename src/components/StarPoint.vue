@@ -26,8 +26,6 @@
 </template>
 
 <script>
-import Socket from '../socket';
-
 export default {
     props: ['poi'],
     data() {
@@ -43,15 +41,16 @@ export default {
                 starPoint: this.starPoint
             };
             this.axios
-            .put(`http://localhost:5000/api/pois/${this.poi.id}`, param)
+            .put(`http://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:5000/api/pois/${this.poi.id}`, param)
             .then(res => {
                 self.flag = true;
                 console.log(res.data.response)
+                this.setCookie();
             })
             .catch(err => {
                 console.log("별점 업데이트에 실패했습니다.",err);
             })
-        },
+        }
     },
     mounted(){
     }

@@ -5,16 +5,18 @@ import App from './App'
 import router from './router'
 import eventBus from './eventBus.js'
 import eventBusPlugin from './eventBusPlugin.js';
-import Socket from './socket.js';
 import VueAxios from 'vue-axios';
-import axios from 'axios'
+import axios from 'axios';
+import VueCookie from 'vue-cookie';
 
 
 Vue.config.productionTip = false
 
+require('es6-promise').polyfill();
+
 Vue.use(eventBusPlugin);
-Vue.use(Socket);
 Vue.use(VueAxios, axios);
+Vue.use(VueCookie);
 
 /* eslint-disable no-new */
 new Vue({

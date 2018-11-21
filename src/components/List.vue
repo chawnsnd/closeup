@@ -53,15 +53,14 @@ export default {
             this.getPoiFromDb(); //실제 시연시 이거사용
         },
         getPoiFromDb(){
-            var self = this;
-            var param = {
-                keyWord: this.keyword,
-                count: this.paging.count,
-                page: this.paging.curPage,
-                collection: "TestPoisCollection"
-            };
             this.axios
-            .get(`http://localhost:5000/api/pois`, param)
+            .get(`http://localhost:5000/api/pois`, {
+                params : {
+                    keyWord: this.keyword,
+                    count: this.paging.count,
+                    page: this.paging.curPage
+                }
+            })
             .then(res => {
                 this.pois = res.pois;
                 this.paging.totalCount = res.totalCount

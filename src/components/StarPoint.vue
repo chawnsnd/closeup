@@ -41,7 +41,8 @@ export default {
                 starPoint: this.starPoint
             };
             this.axios
-            .put(`http://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:5000/api/pois/${this.poi.id}`, param)
+            // .put(`http://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:5000/api/pois/${this.poi.id}`, param)
+            .put(`http://localhost:5000/api/pois/${this.poi.id}`, param)
             .then(res => {
                 self.flag = true;
                 console.log(res.data.response)

@@ -121,7 +121,8 @@ export default {
             });
             // this.param.pois를 통해 recommandPois를 얻을 것
             this.axios
-            .get(`http://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:5000/api/recommendPois`, {
+            // .get(`http://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:5000/api/recommendPois`, {
+            .get(`http://localhost:5000/api/recommendPois`, {
                 params : {
                     people_chosen: lonLats,
                     keyWord: category

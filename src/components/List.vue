@@ -53,7 +53,8 @@ export default {
         },
         getPoiFromDb(){
             this.axios
-            .get(`http://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:5000/api/pois`, {
+            // .get(`http://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:5000/api/pois`, {
+            .get(`http://localhost:5000/api/pois`, {
                 params : {
                     keyWord: this.keyword,
                     count: this.paging.count,
@@ -143,7 +144,8 @@ export default {
                 categories: [keyword],
             };
             this.axios
-            .post(`http://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:5000/api/pois`, param)
+            // .post(`http://ec2-13-125-249-233.ap-northeast-2.compute.amazonaws.com:5000/api/pois`, param)
+            .post(`http://localhost:5000/api/pois`, param)
             .then(res => {
                 console.log(res.data.response)
             })

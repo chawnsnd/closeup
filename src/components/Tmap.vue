@@ -67,7 +67,7 @@ export default {
         },
         setCenter(lon, lat){
             var lonLat = new Tmap.LonLat(lon, lat);
-            this.map.setCenter(lonLat, 15);
+            this.map.setCenter(lonLat, 17);
         },
         clickRecommandPoi(poi){
             this.poisMarkers.forEach(poisMarker => {

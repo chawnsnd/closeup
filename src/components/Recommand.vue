@@ -1,7 +1,7 @@
 <template>
     <div class="recommand" v-if="pois!=null">
         <div class="title"> <span>CloseUp</span>이 추천하는 BEST 장소</div>
-        <div class="r_poi" v-for="(poi, index) in paginatedData" :key="index" @click="clickPoi(poi)">
+        <div class="r_poi" :class="{active:poi.id==selectedPoiId}" v-for="(poi, index) in paginatedData" :key="index" @click="clickPoi(poi)">
             <div class="info">
                 <div class="first line">
                     <span class="name">{{poi.name}}</span>
@@ -39,7 +39,8 @@ export default {
     data(){
         return {
             pageNumber: 0,
-            size: 5
+            size: 5,
+            selectedPoiId: null
         }
     },
     methods: {
@@ -54,6 +55,7 @@ export default {
             window.open(`https://www.google.co.kr/search?q=${keyword}`);
         },
         clickPoi(poi){
+            this.selectedPoiId = poi.id
             this.eventBus.$emit('clickRecommandPoi', poi);
         },
         starPoint(poi){
@@ -93,11 +95,11 @@ export default {
 .r_poi{
     display: flex;
     cursor: pointer;
-    margin-top: 5px;
-    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-top: 10px;
     border-top: 2px solid #eaeaea;
     &:hover{
-        background-color: #eaeaea;
+        background-color: #f1f1f1;
     }
     .img{
         flex: 1;
@@ -106,6 +108,9 @@ export default {
         flex: 5;
         margin-left: 5px;
     }
+}
+.active{
+    background-color: #eaeaea;
 }
 .first{
     font-size: 20px;
